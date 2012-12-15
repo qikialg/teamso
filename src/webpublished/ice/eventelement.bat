@@ -1,0 +1,1 @@
+"D:\works\libs\Ice-3.4.2\bin\vc100\slice2cs.exe" --output-dir "D:\works\projects\TeamSo\src\Business\exhibition\OMWeb" "D:\works\projects\TeamSo\src\Business\exhibition\OMServer\EventElement.ice"

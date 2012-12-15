@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=GBK" />
+<title>展馆报修</title>
+<script language="javascript" type="text/javascript" src="Scripts/jquery-1.8.3.min.js"></script>
+<script language="javascript" type="text/javascript" src="Scripts/functional.js"></script>
+<meta name="keywords" content="展馆报修" />
+<meta name="description" content="展馆报修" />
+<link href="css/css.css" rel="stylesheet" type="text/css" />
+<!--[if IE 6]>
+        <link rel="stylesheet" type="text/css" href="css/ie6.css" />
+  <![endif]-->
+  <!--[if IE 7]>
+        <link rel="stylesheet" type="text/css" href="css/ie7.css" />
+  <![endif]-->
+</head>
+
+<body onload="HomePageOnLoad();">
+
+<div id="backgroundbox" class="bgbox">
+
+    <div class="top">
+
+        <div class="logo"><img src="images/logo.jpg" /></div>
+
+        <div class="nav">		
+            <ul>
+			    <li class="nav0"><a href="index.html" target="_self">添加故障</a></li>
+				<li><a href="list.html" target="_self">故障一览</a></li>
+			</ul>
+			<div class="clear"></div>
+        </div>
+        <div class="clear"></div>
+		
+    </div>
+    <!-- top end -->
+
+    <div class="box">
+	    
+		<div class="floor"><img id="floorimg" src="images/floor1.jpg" border="0" usemap="#Map" />
+		    <map name="Map" id="Map">
+	    	    <area shape="poly" coords="71,36" href="#"/><area shape="poly" coords="69,38,90,0,135,0,156,38,134,76,92,76" href="#"  onclick="FloorClick(3);"/>
+	    	    <area shape="poly" coords="22,43" href="#"/><area shape="poly" coords="21,38,66,38,88,76,65,115,21,115,-1,76" href="#"  onclick="FloorClick(2);"/>
+	    	    <area shape="poly" coords="0,156,22,118,66,118,88,156,65,194,21,194" href="#"  onclick="FloorClick(1);"/>
+	    	    <area shape="poly" coords="68,196,90,158,133,157,156,196,133,234,91,234" href="#"  onclick="FloorClick(-1);"/>
+            </map>
+	    </div>
+		<!-- floor end -->
+		
+		<div class="mid">
+
+        <div class="HallPlaceDiv">
+
+        <div id="firstdiv" class="div0">
+			</div>
+
+            <div id="seconddiv" class="div1">
+			</div>
+                       
+
+            <div class="select_r" id="navbutton"></div>
+        </div>
+
+        
+
+        <!--<div style="height:345px">
+            <table style="width: 100%;">
+                <tr>
+                    <td>
+                       <div id="0" class="div0">
+			</div>
+
+            <div id="1" class="div1">
+			</div>
+                    </td>
+                </tr>
+            </table>
+            </div>-->
+		    
+			<!-- select end -->
+			
+			<div class="record">
+			    <div class="record_l">
+				    <div id="recordposition"><p class="white">故障位置：<b> <a href="#">1楼</a></b></p></div>
+					<div class="writebox">
+                        <textarea id="recordcontent" cols="20" rows="2" class="write" style=" overflow:hidden" onpropertychange="CheckSaveButtonEnable()" oninput="CheckSaveButtonEnable()"></textarea></div>
+				</div>
+				
+				<div id="SaveButton" class="record_r"><a href="#"><img src="images/btn_disable.jpg" border="0" onclick="SaveClick()"/></a></div>
+				<div class="clear"></div>
+			</div>
+			<!-- record end -->
+		</div>
+		<!-- mid end -->
+		
+		<div class="list">
+		    <ul id="recordlistul" class="listlist">
+			</ul>
+            <div class="listpage">
+                <div class="listpage_1">1-5 of 33 </div>
+                <div class="listpage_3"><a href="#" onclick="PrevPageClick()">上一页<</a></div>
+                <div class="listpage_4"><a href="#" onclick="NextPageClick()">>下一页</a></div>
+                <div class="clear">
+            </div>
+		</div>
+		<!-- list end -->
+		<div class="clear"></div>
+
+	</div>
+    <!-- box end -->
+
+    <!--tooltip box-->
+    <div id="right_info" style="width:220px; height:85px; background:url(images/right.gif) no-repeat; font-size:18px; line-height:20px; padding:30px 10px 0 100px; font-weight:bold; text-align:left; z-index:1000"></div>
+    <div id="wrong_info" style="width:220px; height:85px; background:url(images/wrong.gif) no-repeat; font-size:18px; line-height:20px; padding:30px 10px 0 100px; font-weight:bold; text-align: left; z-index:1000"></div>
+    <script language="javascript">
+        var backgroundbox = $("#backgroundbox");
+        $("#right_info").hide();
+        $("#wrong_info").hide();
+        $("#right_info").centerObj(backgroundbox);
+        $("#wrong_info").centerObj(backgroundbox);
+    </script>
+    <!--tooltip box end-->
+
+</div>
+<!-- bg end -->
+
+
+
+</body>
+</html>

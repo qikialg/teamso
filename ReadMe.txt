@@ -1,0 +1,1 @@
+TeamSo is producted by Evomat Tech in C/C++ and javascript. Project focus on connecting teammats and group them to a private social network. Technically, it include infinite state machine with simple event mechanism.

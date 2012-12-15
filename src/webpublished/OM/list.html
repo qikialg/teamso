@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=GBK" />
+<title>展馆报修</title>
+<script language="javascript" type="text/javascript" src="Scripts/jquery-1.4.1.min.js"></script>
+<script language="javascript" type="text/javascript" src="Scripts/functional.js"></script>
+<meta name="keywords" content="展馆报修" />
+<meta name="description" content="展馆报修" />
+<link href="css/css.css" rel="stylesheet" type="text/css" />
+<!--[if IE 6]>
+        <link rel="stylesheet" type="text/css" href="css/ie6.css" />
+  <![endif]-->
+  <!--[if IE 7]>
+        <link rel="stylesheet" type="text/css" href="css/ie7.css" />
+  <![endif]-->
+<script type="text/javascript">
+function MM_swapImgRestore() { //v3.0
+  var i,x,a=document.MM_sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
+}
+function MM_preloadImages() { //v3.0
+  var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+}
+
+function MM_findObj(n, d) { //v4.01
+  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+  if(!x && d.getElementById) x=d.getElementById(n); return x;
+}
+
+function MM_swapImage() { //v3.0
+  var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array; for(i=0;i<(a.length-2);i+=3)
+   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
+}
+</script>
+</head>
+
+<body onload="MM_preloadImages('images/bugbtn1_2.gif','images/bugbtn2_2.gif','images/bugbtn3_2.gif','images/bugbtn4_2.gif','images/bugbtn5_2.gif','images/bugbtn6_2.gif')">
+
+<div class="bgbox">
+
+    <div class="top">
+
+        <div class="logo"><img src="images/logo.jpg" /></div>
+
+        <div class="nav">		
+            <ul>
+			    <li><a href="index.html" target="_self">添加故障</a></li>
+				<li class="nav0"><a href="list.html" target="_self">故障一览</a></li>
+			</ul>
+			<div class="clear"></div>
+        </div>
+        <div class="clear"></div>
+		
+    </div>
+    <!-- top end -->
+
+    <div class="listbox">
+    
+	<div class="listbox_top">
+    
+        <div class="listbox_top_l">
+            <table width="530">
+                <tr>
+                    <td width="45">查看：</td>
+                    <td width="327">
+                      <ul>
+                        <li><a href="#">最新</a></li>
+                        <li><a href="#">未读</a></li>
+                        <li><a href="#">今天</a></li>
+                        <li><a href="#">昨天</a></li>
+                        <li><a href="#">本周</a></li>
+                        <li><a href="#">上周</a></li>
+                        <li><a href="#">本月</a></li>
+                        <li><a href="#">上月</a></li>
+                                              
+                      </ul>
+                   </td>
+                    <td width="142">
+                        <div class="timelist"><input name="time" type="text" class="time" /></div>
+                        <div class="timepic"><a href="#"><img src="images/time.jpg"/></a></div>
+                        <div class="clear"></div></td>
+                </tr>
+                <tr>
+                    <td>位置：</td>
+                    <td>
+                     <ul>
+                        <li><a href="#">全馆</a></li>
+                        <li><a href="#">-1楼</a></li>
+                        <li><a href="#">1楼</a></li>
+                        <li><a href="#">2楼</a></li>
+                        <li><a href="#">3楼</a></li> 
+                      </ul>
+                    </td>
+                    <td>&nbsp;</td>
+                </tr>
+            </table>
+
+            
+            
+            <div class="clear"></div>
+        </div>
+        
+        <div class="listbox_top_r">
+            <table width="180">
+              <tr>
+                <td width="69">显示方式：</td>
+                <td width="95">                
+                     <ul>
+                        <li><a href="list.html">图文</a></li>
+                        <li><a href="list2.html">列表</a></li>
+                      </ul>
+               </td>
+              </tr>
+            </table>
+</div>
+        <div class="clear"></div>
+    
+    </div>
+    
+    
+<div class="bug">
+        <div class="bug_t"></div>
+        <div class="bug_m">
+            <div class="bug_l"><a href="#"><img src="images/pic.jpg" width="158" height="202" /></a></div>
+            <div class="bug_c">
+                <b>N楼</b> > <b>某某某展厅</b> > <b>XXX展像</b><br />
+                <h2>新故障</h2>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXX设备OOO故障 。故障描述。故障描述。故障描述。故障描述。故障描述。故障描述。故障描述。故障描述。<br />
+                <div class="text_r">2012年11月34日X点X分  某人</div>
+                <div class="bugbox">
+                    <div class="bugbox_t"></div>
+                    <div class="bugbox_m">
+                        <input name="" type="text" class="bugtext" />
+                    </div>
+                    <div class="bugbox_f"></div>
+                </div>
+            <a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image4','','images/bugbtn1_2.gif',1)"><img src="images/bugbtn1_1.gif" name="Image4" width="64" height="30" border="0" id="Image4" /></a> <a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image5','','images/bugbtn2_2.gif',1)"><img src="images/bugbtn2_1.gif" name="Image5" width="78" height="30" border="0" id="Image5" /></a> <a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image6','','images/bugbtn3_2.gif',1)"><img src="images/bugbtn3_1.gif" name="Image6" width="78" height="30" border="0" id="Image6" /></a> <a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image7','','images/bugbtn4_2.gif',1)"><img src="images/bugbtn4_1.gif" name="Image7" width="64" height="30" border="0" id="Image7" /></a> <a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image8','','images/bugbtn5_2.gif',1)"><img src="images/bugbtn5_1.gif" name="Image8" width="78" height="30" border="0" id="Image8" /></a> <a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image9','','images/bugbtn6_2.gif',1)"><img src="images/bugbtn6_1.gif" name="Image9" width="64" height="30" border="0" id="Image9" /></a></div>
+            <div class="bug_r">
+                <div class="map"><a href="#"><img src="images/map.jpg" width="113" height="113" /></a></div>
+          </div>
+            <div class="clear"></div>
+        </div>
+        <div class="bug_f"></div>
+    </div>
+    
+    <div class="listbox_bot">
+      1-5 of 33  &nbsp;&nbsp;&nbsp;<a href="#">首页<<</a>&nbsp;&nbsp;&nbsp; <a href="#">上一页<</a> &nbsp;&nbsp;&nbsp;<a href="#">>下一页</a> &nbsp;&nbsp;&nbsp;<a href="#">>>末页</a>
+    </div>
+		
+    </div>
+    <!-- box end -->
+
+</div>
+<!-- bg end -->
+
+</body>
+</html>

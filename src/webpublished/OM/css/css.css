@@ -33,6 +33,7 @@ a:active {	color: #546069;  text-decoration: none;}
 .floor { width:157px; float:left; padding:30px 0 0 19px;}
 .mid { width:555px; float:left; padding-left:10px;}
 .list { width:227px; float:left; padding-top:77px; padding-left:10px; font-size:14px;}
+.list ul li { height:40px;}
 .listpage { text-align:center;}
 .listpage_1 { float:left; width:80px; text-align:center;}
 .listpage_2 { float:left; width:65px; text-align:center;}
@@ -115,7 +116,7 @@ h2 { font-size:24px; font-weight:bold; line-height:42px;}
 .bugbox_m { background:url(../images/bugbox_m.gif); padding:0 15px;}
 .bugtext { width:576px; line-height:18px; border:0;}
 
-.map { width:113px; height:113px; background:url(../images/mapbg.gif) no-repeat; padding:3px;}
+.map { width:113px; height:113px; background:url(../images/mapbg.gif) no-repeat; padding:3px 3px 10px 3px;}
 .listbox_bot { text-align:center;}
 .listbox_bot a { font-weight: normal;}
 .listbox_bot a:link { color: #546069; text-decoration: underline; }
@@ -126,7 +127,7 @@ h2 { font-size:24px; font-weight:bold; line-height:42px;}
 .detail_l { width:507px; float:left; padding:16px 0 0 15px;}
 .detail_r { width:408px; float:right; margin:16px 15px 0 0; height:511px; background:url(../images/detail_pic.gif); padding:15px; text-align:center;}
 .detail_l_l { width:362px; float:left; padding:10px;}
-.detail_l_r { width:113px; float:right;}
+.detail_l_r { width:119px; float:right;}
 
 .detail_old { margin-bottom:10px;}
 .detail_old_t { height:15px; background:url(../images/detail_oldbox_t.gif) no-repeat;}
@@ -137,4 +138,4 @@ h2 { font-size:24px; font-weight:bold; line-height:42px;}
 .detail_new_t { height:15px; background:url(../images/detail_newbox_t.gif) no-repeat;}
 .detail_new_b { height:15px; background:url(../images/detail_newbox_b.gif) no-repeat;}
 .detail_new_m { background:url(../images/detail_newbox_m.gif); padding:0 15px;}
-.detailtext { width:477px; line-height:18px; border:0;}
+.detailtext { width:477px; line-height:18px; border:0; height:50px;}

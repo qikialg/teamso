@@ -68,7 +68,7 @@ a:active {	color: #546069;  text-decoration: none;}
 
 .list_l { padding-left:5px; }
 .list_r { text-align:right; padding-right:2px; width:80px; float:right;display:inline;}
-.list ul li { line-height:29px; border-bottom:1px dotted #333333; margin-bottom:15px; line-height:20px; padding: 0 5px 10px 5px;}
+.list ul li { border-bottom:1px dotted #333333; margin-bottom:15px; line-height:20px; padding: 0 5px 10px 5px;}
 .list ul li a:link { text-decoration: none; }
 .list ul li a:visited { text-decoration: none; }
 .list ul li a:hover { text-decoration: underline; }
@@ -90,7 +90,7 @@ a:active {	color: #546069;  text-decoration: none;}
 .listbox_top_l li a:visited {	color: #546069; text-decoration: underline; }
 .listbox_top_l li a:hover {	color: #fff; text-decoration: none; background:url(../images/boxo.gif); font-weight:bold; }
 .listbox_top_l li a:active {	color: #546069; text-decoration: underline; }
-.timelist { width:80px; }
+.timelist { width:80px;}
 .time { width:80px; height:16px; line-height:14px; float:left;}
 .timepic { width:21px; float:left; padding:1px 0 0 5px;}
 .listbox_top_r li { float:left; width:40px; text-align:center; line-height:20px;}

@@ -54,11 +54,10 @@ function ShowNewFaultPage(pagecontent, pageid) {
     }
 
     //clean old data
-    $("#recordlistul").innerHTML = "";
-
+    $("#recordlistul").html("");
     var items = JSON.parse(pagecontent);
     var nitems = items.length;
-    var oneLineMaxBytes = 36;
+    var oneLineMaxBytes = 18;
 
     //  set first item id
     pageFirstID[pageid] = items[0].status.objid;
@@ -108,19 +107,21 @@ function ShowNewFaultPage(pagecontent, pageid) {
 
         itemid++;
     }
-
+    
+    //  change page id
+    if (newFaultPageID > pageid) {  //  backward
+        touchEnd = false;
+    }
+    newFaultPageID = pageid;
 }
 
 //  get perticular new faults page
 function GetNewFaultPage(pageid) {
-    if ((pageid < 0) || touchEnd) {
+    if ((pageid > newFaultPageID) && touchEnd) {   //  forward
         return;
     }
-
-    var firstid = pageFirstID[pageid];
-    if (firstid == null) {
-        pageFirstID.push("0");
-        pageLastID.push("0");
+    else if ((pageid < newFaultPageID) && (pageid < 0)) {   //  backward
+        return;
     }
 
     var lastid = "0";
@@ -130,7 +131,6 @@ function GetNewFaultPage(pageid) {
 
     var today = new Date();
     today.setHours(0, 0, 0, 0);
-
     var tomorrow = new Date();
     tomorrow.setDate(today.getDate()+1);
     tomorrow.setHours(0, 0, 0, 0);

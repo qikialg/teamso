@@ -98,7 +98,7 @@ function ShowNewFaultPage(pagecontent, pageid) {
         var detailPageUrl = "detail.html?oid=" + items[itemid].status.objid;
 
         innerHTML += "<a href=\"" + detailPageUrl + "\">" + recognized + "</a>";
-        innerHTML += "<div class=\"list_r\"><a href=\"" + detailPageUrl + "\">" + "- " + MillionSecondToDate(items[itemid].status.date.$date, 0) + "</a>";
+        innerHTML += "<div class=\"list_r\"><a href=\"" + detailPageUrl + "\">" + "- " + MillionSecondToDate(items[itemid].status.date.$date, 0) + "</a></div>";
         innerHTML += "<div class=\"clear\"></div>";
         innerHTML += "</li>";
         $("#recordlistul").append(innerHTML);

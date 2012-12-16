@@ -36,14 +36,6 @@ var MoveFlag;
 
 var MoreFlag;
 
-function getQueryString(name) {    
-    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");    
-    var r = window.location.search.substr(1).match(reg);    
-    if (r != null) return unescape(r[2]); return null;    
-    }
-
-
-
 ////  new fault paging
 var serviceUrl = "http://113.12.226.243:9006/eventelement.aspx";
 var pageFirstID = new Array();
@@ -53,6 +45,12 @@ var touchEnd = false;
 var pageVolume = 11;    // the upper of item that one page can hold
 var oneLineHeight = 46;
 var twoLineHeight = 66;
+
+function getQueryString(name) {    
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");    
+    var r = window.location.search.substr(1).match(reg);    
+    if (r != null) return unescape(r[2]); return null;    
+    }
 
 // show new fault page
 function ShowNewFaultPage(pagecontent, pageid) {

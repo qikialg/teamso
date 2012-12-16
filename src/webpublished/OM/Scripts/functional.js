@@ -19,9 +19,11 @@ var IsFirstTime = true;
 
 var HandleRequest = false;
 
-var ShowFaultCount = 8;
+var ShowFaultCount = 6;
 
-var CharPerLine = 20;
+var CharPerLine = 18;
+
+var ShowFaultLength = 34;
 
 var FaultListObj = null;
 
@@ -32,6 +34,121 @@ var TotalPage;
 var DivNum = 0;
 
 var MoveFlag;
+
+var MoreFlag;
+
+////  new fault paging
+var serviceUrl = "http://113.12.226.243:9006/eventelement.aspx";
+var pageFirstID = new Array();
+var pageLastID = new Array();
+var newFaultPageID = 0;
+var touchEnd = false;
+var pageVolume = 11;    // the upper of item that one page can hold
+var oneLineHeight = 46;
+var twoLineHeight = 66;
+
+// show new fault page
+function ShowNewFaultPage(pagecontent, pageid) {
+    if (pagecontent.length <= 3) {
+        return;
+    }
+
+    //clean old data
+    $("#recordlistul").innerHTML = "";
+
+    var items = JSON.parse(pagecontent);
+    var nitems = items.length;
+    var oneLineMaxBytes = 36;
+
+    //  set first item id
+    pageFirstID[pageid] = items[0].status.objid;
+
+    if (nitems < pageVolume) {
+        touchEnd = true;
+    }
+
+    var totalHeight = 0;
+    var itemid = 0;
+
+    while (itemid <= (nitems - 1)) {
+        var innerHTML = "<li>";
+
+        var rawFaultContent = items[itemid].fault.fault_report;
+        var byteCode = rawFaultContent.replace(/%u/g, "");
+        var byteCodeLen = byteCode.length;
+
+        if ((byteCodeLen * 0.5) > oneLineMaxBytes) {
+            totalHeight += twoLineHeight;
+        }
+        else {
+            totalHeight += oneLineHeight;
+        }
+
+        //  exceed the list
+        if (totalHeight > 445) {
+            break;
+        }
+
+        var unescapted = unescape(rawFaultContent);
+        var truncated = unescapted.substr(0, 19);
+        if (truncated.length < unescapted.length) {
+            truncated += "...";
+        }
+        var recognized = htmldeescape(truncated);
+        var detailPageUrl = "detail.html?oid=" + items[itemid].status.objid;
+
+        innerHTML += "<a href=\"" + detailPageUrl + "\">" + recognized + "</a>";
+        innerHTML += "<div class=\"list_r\"><a href=\"" + detailPageUrl + "\">" + "- " + MillionSecondToDate(items[itemid].status.date.$date, 0) + "</a>";
+        innerHTML += "<div class=\"clear\"></div>";
+        innerHTML += "</li>";
+        $("#recordlistul").append(innerHTML);
+
+        //  set last item id
+        pageLastID[pageid] = items[itemid].status.objid;
+
+        itemid++;
+    }
+
+}
+
+//  get perticular new faults page
+function GetNewFaultPage(pageid) {
+    if ((pageid < 0) || touchEnd) {
+        return;
+    }
+
+    var firstid = pageFirstID[pageid];
+    if (firstid == null) {
+        pageFirstID.push("0");
+        pageLastID.push("0");
+    }
+
+    var lastid = "0";
+    if (pageid > 0) {
+        lastid = pageLastID[pageid - 1];
+    }
+
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    var tomorrow = new Date();
+    tomorrow.setDate(today.getDate()+1);
+    tomorrow.setHours(0, 0, 0, 0);
+
+    var begin = Date.parse(today);
+    var end = Date.parse(tomorrow);
+    var fetchPathPar = { oc: "ff", sbegin: begin, send: end, lastobjid: lastid, ntuples: pageVolume, status: 1 }; // fetch first 11 fault, 11 is enough for one page
+
+    //  fetch fault data
+    $.ajax({
+        type: "POST",
+        url: serviceUrl,
+        data: fetchPathPar,
+        success: function (data) {
+            ShowNewFaultPage(data, pageid);
+        }
+    });
+}
 
 jQuery.fn.center = function () {
     this.css("position", "absolute");
@@ -50,6 +167,92 @@ jQuery.fn.centerObj = function (relObj) {
 }
 
 function HomePageOnLoad() {
+
+    InitDivAndCSS();
+
+    //InitFaultList();
+
+    InitExhibitionHall(1);
+
+    ChangeRecordPosition();
+
+    GetNewFaultPage(newFaultPageID);
+}
+
+function DetailPageOnLoad() {
+
+    InitDetail();
+}
+
+function InitDetail() {
+    var UrlValue = window.location.search;
+
+    UrlValue = UrlValue.substr(1, UrlValue.length - 1);
+
+    var RequestUrl = "http://113.12.226.243:9006/eventelement.aspx?oc=faf&oid=" + UrlValue;
+
+    $.post(RequestUrl, function (data) {
+        InitDetailDiv(data);
+
+    });
+
+}
+
+function InitDetailDiv(data) {
+    var obj = jQuery.parseJSON(data);
+
+    var fault_div = document.getElementById("fault_content");
+
+    var tempcontenet = "";
+
+    var fault_div_content = "<b>" + obj.floor_name + "</b> > <b>" + obj.hall_name + "</b> > <b>" + obj.subject_name + "</b><br/>";
+
+    fault_div_content += "<h2>新故障</h2>";
+
+    tempcontenet = unescape(obj.fault_report);
+
+    tempcontenet = htmldeescape(tempcontenet);
+
+    tempcontenet = RN2BR(tempcontenet);
+
+    fault_div_content += tempcontenet;
+
+    fault_div_content += "<br />";
+
+    fault_div_content += "<div class=\"text_r\">" + MillionSecondToDate(obj.date.$date, 1) + " 某人</div>";
+
+    fault_div.innerHTML = fault_div_content;
+
+//    switch (parseInt(obj[0].status)) {
+//        case 1:
+//            document.getElementById("Bug").src = "images/bugbtn1_2.gif";
+//            break;
+//        case 2:
+//            break;
+//        case 4:
+//            document.getElementById("Bug").src = "images/bugbtn1_2.gif";
+//            break;
+//        case 8:
+//            document.getElementById("NoBug").src = "images/bugbtn2_2.gif";
+//            break;
+//        case 16:
+//            document.getElementById("Repeat").src = "images/bugbtn4_2.gif";
+//            break;
+//        case 32:
+//            document.getElementById("Closed").src = "images/bugbtn3_2.gif";
+//            break;
+//        case 64:
+//            document.getElementById("Processing").src = "images/bugbtn5_2.gif";
+//            break;
+//        case 128:
+//            break;
+//        case 256:
+//            break;
+//        case 512:
+//            document.getElementById("Fixed").src = "images/bugbtn6_2.gif";
+//            break;
+
+//    }
 }
 
 function showRightInfoBox(content) {
@@ -68,11 +271,11 @@ function ShortenContent(content) {
 
     var i = 0;
 
-    var result = "",tempresult = "";
+    var result = "";
 
     var ch;
 
-    var MoreFlag = len > CharPerLine * 2;
+    MoreFlag = true;
 
     for (i = 0; i < len; i++) {
 
@@ -85,51 +288,20 @@ function ShortenContent(content) {
             shortcontentlen += 2;
         }
 
-        if (shortcontentlen > CharPerLine) {
+        if (shortcontentlen > ShowFaultLength) {
+            result += "...";
+
             break;
         }
 
-        tempresult += content[i];
+        result += content[i];
     }
 
-    result += htmldeescape(tempresult);
+    result = htmldeescape(result);
 
-    //result += "<BR />";
-
-    if (len <= CharPerLine) {
-        result += "&nbsp";
+    if (shortcontentlen <= CharPerLine) {
+        MoreFlag = false;
     }
-
-    shortcontentlen = 0;
-
-    tempresult = "";
-
-    for (; i < len; i++) {
-        ch = content.charCodeAt(i);
-
-        if (ch >= 0 && ch < 128) {
-            shortcontentlen++;
-        }
-        else {
-            shortcontentlen += 2;
-        }
-
-        if (MoreFlag) {
-            if (shortcontentlen > (CharPerLine - 3)) {
-                tempresult += "...";
-                break;
-            }
-        }
-        else {
-            if (shortcontentlen > CharPerLine) {
-                break;
-            }
-        }
-
-        tempresult += content[i];
-    }
-
-    result += htmldeescape(tempresult);
 
     return result;
 }
@@ -169,6 +341,14 @@ function htmldeescape(content) {
     return content;
 }
 
+function RN2BR(content) {
+    var regExp = new RegExp("\r\n", "g");
+
+    content = content.replace(regExp, "<br/>");
+
+    return content;
+}
+
 function stringToBytes(str) {
     var ch, st=[], re = [];
 
@@ -189,7 +369,7 @@ function stringToBytes(str) {
     return re;
 }
 
-function MillionSecondToDate(p) {
+function MillionSecondToDate(p,format) {
     var mydate = new Date();
 
     mydate.setFullYear(1970, 1, 1);
@@ -198,7 +378,41 @@ function MillionSecondToDate(p) {
 
     mydate.setMilliseconds(p);
 
-    var datestring = (mydate.getMonth() + 1) + "月" + mydate.getDate() + "日";
+    var datestring;
+
+    var timestring;
+
+    var timevalue;
+
+    switch (format) {
+        case 0:
+            datestring = (mydate.getMonth() + 1) + "月" + mydate.getDate() + "日";
+            break;
+        case 1:
+            datestring = mydate.getFullYear() + "年" + (mydate.getMonth() + 1) + "月" + mydate.getDate() + "日  ";
+
+            timevalue = mydate.getHours();
+
+            if (timevalue < 10) {
+                timestring = "0" + timevalue;
+            }
+            else {
+                timestring = "" + timevalue;
+            }
+
+            timevalue = mydate.getMinutes();
+
+            if (timevalue < 10) {
+                timestring += ":0" + timevalue;
+            }
+            else {
+                timestring += ":" + timevalue;
+            }
+
+            datestring += timestring;
+
+            break;
+    }
 
     return datestring;
 }
@@ -645,14 +859,19 @@ function InitFaultListDiv(begin,end)
         content = "<li>";
 
         //  fault description
-        content += "<a href=\"#\">";
+        content += "<a href=\"detail.html?" + FaultListObj[len - i].fault._id.$oid + "\">";
         var faultcontent = unescape(FaultListObj[ len - i ].fault.fault_report);
         content += ShortenContent(faultcontent);
         content += "</a>";
 
         //  presentation date
         var datePreference = "- ";
-        content += "<div class=\"list_r\"><a href=\"#\">" + datePreference + MillionSecondToDate(FaultListObj[i].status.date.$date) + "</a></div>";
+        content += "<div class=\"list_r\"><a href=\"#\">" + datePreference + MillionSecondToDate(FaultListObj[ len - i ].status.date.$date,0) + "</a></div>";
+
+        if (MoreFlag == false) {
+            content += "<BR/>&nbsp";
+        }
+
         content += "<div class=\"clear\"></div>";
 
         //  close li
@@ -708,35 +927,35 @@ function CheckSaveButtonEnable() {
 }
 
 function CheckPageButton() {
-    if (TotalPage > 1) {
-        if (CurrentPage == 0) {
-            document.getElementById("FirstPage").src = "images/first_disable.jpg";
+//    if (TotalPage > 1) {
+//        if (CurrentPage == 0) {
+//            document.getElementById("FirstPage").src = "images/first_disable.jpg";
 
-            document.getElementById("PrevPage").src = "images/prev_disable.jpg";
+//            document.getElementById("PrevPage").src = "images/prev_disable.jpg";
 
-            document.getElementById("NextPage").src = "images/next.jpg";
+//            document.getElementById("NextPage").src = "images/next.jpg";
 
-            document.getElementById("LastPage").src = "images/last.jpg";
-        }
-        else if ((CurrentPage > 0) && (CurrentPage < (TotalPage - 1))) {
-            document.getElementById("FirstPage").src = "images/first.jpg";
+//            document.getElementById("LastPage").src = "images/last.jpg";
+//        }
+//        else if ((CurrentPage > 0) && (CurrentPage < (TotalPage - 1))) {
+//            document.getElementById("FirstPage").src = "images/first.jpg";
 
-            document.getElementById("PrevPage").src = "images/prev.jpg";
+//            document.getElementById("PrevPage").src = "images/prev.jpg";
 
-            document.getElementById("NextPage").src = "images/next.jpg";
+//            document.getElementById("NextPage").src = "images/next.jpg";
 
-            document.getElementById("LastPage").src = "images/last.jpg";
-        }
-        else {
-            document.getElementById("FirstPage").src = "images/first.jpg";
+//            document.getElementById("LastPage").src = "images/last.jpg";
+//        }
+//        else {
+//            document.getElementById("FirstPage").src = "images/first.jpg";
 
-            document.getElementById("PrevPage").src = "images/prev.jpg";
+//            document.getElementById("PrevPage").src = "images/prev.jpg";
 
-            document.getElementById("NextPage").src = "images/next_disable.jpg";
+//            document.getElementById("NextPage").src = "images/next_disable.jpg";
 
-            document.getElementById("LastPage").src = "images/last_disable.jpg";
-        }
-    }
+//            document.getElementById("LastPage").src = "images/last_disable.jpg";
+//        }
+//    }
 }
 
 function FirstPageClick() {
@@ -821,16 +1040,3 @@ function LastPageClick() {
 
     CheckPageButton();
 }
-
-
-$(function () {
-
-    InitDivAndCSS();
-
-    InitFaultList();
-
-    InitExhibitionHall(1);
-
-    ChangeRecordPosition();
-
-})

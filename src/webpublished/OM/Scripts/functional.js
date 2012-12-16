@@ -1,4 +1,3 @@
-
 var OldExhibitionPlace = null;
 
 var OldFloorNum = 1;
@@ -8,6 +7,8 @@ var OldExhibitionHall = null;
 var ShowDiv;
 
 var HideDiv;
+
+var testdiv;
 
 var ShowDivCSS;
 
@@ -207,7 +208,7 @@ function InitDetailDiv(data) {
 
     var fault_div_content = "<b>" + obj.floor_name + "</b> > <b>" + obj.hall_name + "</b> > <b>" + obj.subject_name + "</b><br/>";
 
-    fault_div_content += "<h2>ÐÂ¹ÊÕÏ</h2>";
+    fault_div_content += "<h2>ï¿½Â¹ï¿½ï¿½ï¿½</h2>";
 
     tempcontenet = unescape(obj.fault_report);
 
@@ -219,7 +220,7 @@ function InitDetailDiv(data) {
 
     fault_div_content += "<br />";
 
-    fault_div_content += "<div class=\"text_r\">" + MillionSecondToDate(obj.date.$date, 1) + " Ä³ÈË</div>";
+    fault_div_content += "<div class=\"text_r\">" + MillionSecondToDate(obj.date.$date, 1) + " Ä³ï¿½ï¿½</div>";
 
     fault_div.innerHTML = fault_div_content;
 
@@ -386,10 +387,10 @@ function MillionSecondToDate(p,format) {
 
     switch (format) {
         case 0:
-            datestring = (mydate.getMonth() + 1) + "ÔÂ" + mydate.getDate() + "ÈÕ";
+            datestring = (mydate.getMonth() + 1) + "ï¿½ï¿½" + mydate.getDate() + "ï¿½ï¿½";
             break;
         case 1:
-            datestring = mydate.getFullYear() + "Äê" + (mydate.getMonth() + 1) + "ÔÂ" + mydate.getDate() + "ÈÕ  ";
+            datestring = mydate.getFullYear() + "ï¿½ï¿½" + (mydate.getMonth() + 1) + "ï¿½ï¿½" + mydate.getDate() + "ï¿½ï¿½  ";
 
             timevalue = mydate.getHours();
 
@@ -731,13 +732,13 @@ function AddRecordList(recordContent) {
     }
 
     if (recordContent == "") {
-        alert("¹ÊÕÏÃèÊö²»ÄÜÎª¿Õ");
+        alert("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½");
 
         return;
     }
     else {
         if ((OldExhibitionHall == null) || (OldExhibitionPlace == null)) {
-            alert("ÇëÏÈÑ¡ÔñÍê±ØÒªµÄÐÅÏ¢");
+            alert("ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ï¢");
 
             return;
         }
@@ -777,7 +778,7 @@ function AddRecordList(recordContent) {
 
             if (result[0] == 1) {
 
-                showRightInfoBox("±£´æ³É¹¦");
+                showRightInfoBox("ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½");
 
                 document.getElementById("recordcontent").value = "";
 
@@ -814,7 +815,7 @@ function ChangeRecordPosition() {
 
     var positionobj = document.getElementById("recordposition");
 
-    var positioncontent = "<p>¹ÊÕÏÎ»ÖÃ£º ";
+    var positioncontent = "<p>ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ã£ï¿½ ";
 
     if (OldFloorNum != null) {
         positioncontent += "<b><a href=\"#\" onclick=\"RecordPositionClick(1)\">";

@@ -8,8 +8,6 @@ var ShowDiv;
 
 var HideDiv;
 
-var testdiv;
-
 var ShowDivCSS;
 
 var HideDivCSS;
@@ -37,6 +35,14 @@ var DivNum = 0;
 var MoveFlag;
 
 var MoreFlag;
+
+function getQueryString(name) {    
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");    
+    var r = window.location.search.substr(1).match(reg);    
+    if (r != null) return unescape(r[2]); return null;    
+    }
+
+
 
 ////  new fault paging
 var serviceUrl = "http://113.12.226.243:9006/eventelement.aspx";
@@ -188,7 +194,7 @@ function DetailPageOnLoad() {
 function InitDetail() {
     var UrlValue = window.location.search;
 
-    UrlValue = UrlValue.substr(1, UrlValue.length - 1);
+    UrlValue = getQueryString("oid");
 
     var RequestUrl = "http://113.12.226.243:9006/eventelement.aspx?oc=faf&oid=" + UrlValue;
 

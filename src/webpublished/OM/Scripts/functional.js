@@ -1,4 +1,5 @@
-var OldExhibitionPlace = null;
+﻿
+﻿var OldExhibitionPlace = null;
 
 var OldFloorNum = 1;
 
@@ -136,7 +137,7 @@ function ShowNewFaultPage(pagecontent, pageid, requestPar) {
             $("#page_tip").html("");
             var beginoffset = pageInfo.offset;
             var endoffset = pageInfo.offset + itemid - 1;
-            $("#page_tip").append(beginoffset + "-" + endoffset + " Of " + pageInfo.nitems);
+            $("#page_tip").append(beginoffset + "-" + endoffset + " of " + pageInfo.nitems);
         }
     });
 }
@@ -290,6 +291,14 @@ function showRightInfoBox(content) {
     rightInfoBox.fadeOut(4000);
 }
 
+function showWrongInfoBox(content) {
+    var rightInfoBox = $("#wrong_info");
+    rightInfoBox.hide();
+    rightInfoBox.text(content);
+    rightInfoBox.fadeIn('slow');
+    rightInfoBox.fadeOut(7000);
+}
+
 function ShortenContent(content) {
 
     var len = content.length;
@@ -417,10 +426,10 @@ function MillionSecondToDate(p,format) {
 
     switch (format) {
         case 0:
-            datestring = (mydate.getMonth() + 1) + "��" + mydate.getDate() + "��";
+            datestring = (mydate.getMonth() + 1) + "月" + mydate.getDate() + "日";
             break;
         case 1:
-            datestring = mydate.getFullYear() + "��" + (mydate.getMonth() + 1) + "��" + mydate.getDate() + "��  ";
+            datestring = mydate.getFullYear() + "年" + (mydate.getMonth() + 1) + "月" + mydate.getDate() + "日  ";
 
             timevalue = mydate.getHours();
 
@@ -657,7 +666,7 @@ function InitExhibitionHall(ExhibitionHallContent) {
 
     HandleRequest = true;
 
-    url = "http://113.12.226.243:9006/eventelement.aspx?oc=hi&fc=" + ExhibitionHallContent + "¥";
+    url = "http://113.12.226.243:9006/eventelement.aspx?oc=hi&fc=" + ExhibitionHallContent + "楼";
 
     $.post(url, function (data) {
 
@@ -762,13 +771,13 @@ function AddRecordList(recordContent) {
     }
 
     if (recordContent == "") {
-        alert("������������Ϊ��");
+        showWrongInfoBox("故障描述为空，请对故障进行说明");
 
         return;
     }
     else {
         if ((OldExhibitionHall == null) || (OldExhibitionPlace == null)) {
-            alert("����ѡ������Ҫ����Ϣ");
+            showWrongInfoBox("请选择 展厅、展项并对故障进行描述后再进行保存");
 
             return;
         }
@@ -807,8 +816,7 @@ function AddRecordList(recordContent) {
             var result = stringToBytes(data);
 
             if (result[0] == 1) {
-
-                showRightInfoBox("�����ɹ�");
+                showRightInfoBox("故障保存成功");
 
                 document.getElementById("recordcontent").value = "";
 
@@ -844,15 +852,14 @@ function RecordPositionClick(LevelClick) {
 function ChangeRecordPosition() {
 
     var positionobj = document.getElementById("recordposition");
-
-    var positioncontent = "<p>����λ�ã� ";
+    var positioncontent = "<p>故障位置: ";
 
     if (OldFloorNum != null) {
         positioncontent += "<b><a href=\"#\" onclick=\"RecordPositionClick(1)\">";
 
         positioncontent += OldFloorNum;
 
-        positioncontent += "¥</a></b>";
+        positioncontent += "楼</a></b>";
 
         if ((OldExhibitionHall != null) && (Level >= 2)) {
             positioncontent += " > <b><a href=\"#\" onclick=\"RecordPositionClick(2)\">";

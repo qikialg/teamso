@@ -1,3 +1,4 @@
+
 var OldExhibitionPlace = null;
 
 var OldFloorNum = 1;
@@ -45,12 +46,6 @@ var touchEnd = false;
 var pageVolume = 11;    // the upper of item that one page can hold
 var oneLineHeight = 46;
 var twoLineHeight = 66;
-
-function getQueryString(name) {    
-    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");    
-    var r = window.location.search.substr(1).match(reg);    
-    if (r != null) return unescape(r[2]); return null;    
-    }
 
 // show new fault page
 function ShowNewFaultPage(pagecontent, pageid) {
@@ -192,7 +187,7 @@ function DetailPageOnLoad() {
 function InitDetail() {
     var UrlValue = window.location.search;
 
-    UrlValue = getQueryString("oid");
+    UrlValue = UrlValue.substr(1, UrlValue.length - 1);
 
     var RequestUrl = "http://113.12.226.243:9006/eventelement.aspx?oc=faf&oid=" + UrlValue;
 
@@ -212,7 +207,7 @@ function InitDetailDiv(data) {
 
     var fault_div_content = "<b>" + obj.floor_name + "</b> > <b>" + obj.hall_name + "</b> > <b>" + obj.subject_name + "</b><br/>";
 
-    fault_div_content += "<h2>�¹���</h2>";
+    fault_div_content += "<h2>新故障</h2>";
 
     tempcontenet = unescape(obj.fault_report);
 
@@ -224,7 +219,7 @@ function InitDetailDiv(data) {
 
     fault_div_content += "<br />";
 
-    fault_div_content += "<div class=\"text_r\">" + MillionSecondToDate(obj.date.$date, 1) + " ĳ��</div>";
+    fault_div_content += "<div class=\"text_r\">" + MillionSecondToDate(obj.date.$date, 1) + " 某人</div>";
 
     fault_div.innerHTML = fault_div_content;
 
@@ -347,13 +342,9 @@ function htmldeescape(content) {
 }
 
 function RN2BR(content) {
-    var regExp = new RegExp("\r", "g");
+    var regExp = new RegExp("\r\n", "g");
 
-    content = content.replace(regExp, "");
-
-    var regExp1 = new RegExp("\n", "g");
-
-    content = content.replace(regExp1, "<br/>");
+    content = content.replace(regExp, "<br/>");
 
     return content;
 }
@@ -395,10 +386,10 @@ function MillionSecondToDate(p,format) {
 
     switch (format) {
         case 0:
-            datestring = (mydate.getMonth() + 1) + "��" + mydate.getDate() + "��";
+            datestring = (mydate.getMonth() + 1) + "月" + mydate.getDate() + "日";
             break;
         case 1:
-            datestring = mydate.getFullYear() + "��" + (mydate.getMonth() + 1) + "��" + mydate.getDate() + "��  ";
+            datestring = mydate.getFullYear() + "年" + (mydate.getMonth() + 1) + "月" + mydate.getDate() + "日  ";
 
             timevalue = mydate.getHours();
 
@@ -635,7 +626,7 @@ function InitExhibitionHall(ExhibitionHallContent) {
 
     HandleRequest = true;
 
-    url = "http://113.12.226.243:9006/eventelement.aspx?oc=hi&fc=" + ExhibitionHallContent + "¥";
+    url = "http://113.12.226.243:9006/eventelement.aspx?oc=hi&fc=" + ExhibitionHallContent + "楼";
 
     $.post(url, function (data) {
 
@@ -740,13 +731,13 @@ function AddRecordList(recordContent) {
     }
 
     if (recordContent == "") {
-        alert("������������Ϊ��");
+        alert("故障描述不能为空");
 
         return;
     }
     else {
         if ((OldExhibitionHall == null) || (OldExhibitionPlace == null)) {
-            alert("����ѡ������Ҫ����Ϣ");
+            alert("请先选择完必要的信息");
 
             return;
         }
@@ -786,7 +777,7 @@ function AddRecordList(recordContent) {
 
             if (result[0] == 1) {
 
-                showRightInfoBox("�����ɹ�");
+                showRightInfoBox("保存成功");
 
                 document.getElementById("recordcontent").value = "";
 
@@ -823,14 +814,14 @@ function ChangeRecordPosition() {
 
     var positionobj = document.getElementById("recordposition");
 
-    var positioncontent = "<p>����λ�ã� ";
+    var positioncontent = "<p>故障位置： ";
 
     if (OldFloorNum != null) {
         positioncontent += "<b><a href=\"#\" onclick=\"RecordPositionClick(1)\">";
 
         positioncontent += OldFloorNum;
 
-        positioncontent += "¥</a></b>";
+        positioncontent += "楼</a></b>";
 
         if ((OldExhibitionHall != null) && (Level >= 2)) {
             positioncontent += " > <b><a href=\"#\" onclick=\"RecordPositionClick(2)\">";

@@ -347,9 +347,13 @@ function htmldeescape(content) {
 }
 
 function RN2BR(content) {
-    var regExp = new RegExp("\r\n", "g");
+    var regExp = new RegExp("\r", "g");
 
-    content = content.replace(regExp, "<br/>");
+    content = content.replace(regExp, "");
+
+    var regExp1 = new RegExp("\n", "g");
+
+    content = content.replace(regExp1, "<br/>");
 
     return content;
 }

@@ -40,6 +40,7 @@ var MoreFlag;
 var serviceUrl = "http://113.12.226.243:9006/eventelement.aspx";
 var pageFirstID = new Array();
 var pageLastID = new Array();
+//var nItemInPage = new Array();
 var newFaultPageID = 0;
 var touchEnd = false;
 var pageVolume = 11;    // the upper of item that one page can hold
@@ -59,7 +60,7 @@ function getQueryString(name) {
 
 
 // show new fault page
-function ShowNewFaultPage(pagecontent, pageid) {
+function ShowNewFaultPage(pagecontent, pageid, requestPar) {
     if (pagecontent.length <= 3) {
         return;
     }
@@ -79,6 +80,7 @@ function ShowNewFaultPage(pagecontent, pageid) {
 
     var totalHeight = 0;
     var itemid = 0;
+ 
 
     while (itemid <= (nitems - 1)) {
         var innerHTML = "<li>";
@@ -95,7 +97,7 @@ function ShowNewFaultPage(pagecontent, pageid) {
         }
 
         //  exceed the list
-        if (totalHeight > 445) {
+        if (totalHeight > 460) {
             break;
         }
 
@@ -119,11 +121,30 @@ function ShowNewFaultPage(pagecontent, pageid) {
         itemid++;
     }
     
+    //  save item number in the page
+    //nItemInPage[pageid] = itemid;
+
     //  change page id
     if (newFaultPageID > pageid) {  //  backward
         touchEnd = false;
     }
     newFaultPageID = pageid;
+
+
+    //  set page information
+    var par = { oc: "gpm", sbegin: requestPar.sbegin, send: requestPar.send, lastobjid: items[0].status.objid, status: requestPar.status };
+    $.ajax({
+        type: "POST",
+        url: serviceUrl,
+        data: par,
+        success: function (data) {
+            var pageInfo = JSON.parse(data);
+            $("#page_tip").html("");
+            var beginoffset = pageInfo.offset;
+            var endoffset = pageInfo.offset + itemid - 1;
+            $("#page_tip").append(beginoffset + "-" + endoffset + " Of " + pageInfo.nitems);
+        }
+    });
 }
 
 //  get perticular new faults page
@@ -149,6 +170,7 @@ function GetNewFaultPage(pageid) {
     var begin = Date.parse(today);
     var end = Date.parse(tomorrow);
     var fetchPathPar = { oc: "ff", sbegin: begin, send: end, lastobjid: lastid, ntuples: pageVolume, status: 1 }; // fetch first 11 fault, 11 is enough for one page
+    var pageTipPar = { sbegin: begin, send: end, ntuples: pageVolume, status: 1 };
 
     //  fetch fault data
     $.ajax({
@@ -156,7 +178,7 @@ function GetNewFaultPage(pageid) {
         url: serviceUrl,
         data: fetchPathPar,
         success: function (data) {
-            ShowNewFaultPage(data, pageid);
+            ShowNewFaultPage(data, pageid, pageTipPar);
         }
     });
 }
@@ -795,8 +817,8 @@ function AddRecordList(recordContent) {
                 OldFloorNum = 0;
 
                 FloorClick(1);
-
-                InitFaultList();
+                GetNewFaultPage(0);
+                //InitFaultList();
             }
             else {
             }

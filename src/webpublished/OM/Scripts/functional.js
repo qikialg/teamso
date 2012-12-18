@@ -47,6 +47,12 @@ var pageVolume = 11;    // the upper of item that one page can hold
 var oneLineHeight = 46;
 var twoLineHeight = 66;
 
+function getQueryString(name) {    
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");    
+    var r = window.location.search.substr(1).match(reg);    
+    if (r != null) return unescape(r[2]); return null;    
+    }
+
 // show new fault page
 function ShowNewFaultPage(pagecontent, pageid) {
     if (pagecontent.length <= 3) {
@@ -185,9 +191,7 @@ function DetailPageOnLoad() {
 }
 
 function InitDetail() {
-    var UrlValue = window.location.search;
-
-    UrlValue = UrlValue.substr(1, UrlValue.length - 1);
+    var UrlValue = getQueryString("oid");
 
     var RequestUrl = "http://113.12.226.243:9006/eventelement.aspx?oc=faf&oid=" + UrlValue;
 
@@ -311,9 +315,13 @@ function htmldeescape(content) {
 }
 
 function RN2BR(content) {
-    var regExp = new RegExp("\r\n", "g");
+    var regExp = new RegExp("\r", "g");
 
-    content = content.replace(regExp, "<br/>");
+    content = content.replace(regExp, "");
+
+    var regExp1 = new RegExp("\n","g");
+
+    content = content.replace(regExp1,"<br />");
 
     return content;
 }

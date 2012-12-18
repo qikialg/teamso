@@ -69,10 +69,6 @@ function ShowNewFaultPage(pagecontent, pageid, requestPar) {
     //  set first item id
     pageFirstID[pageid] = items[0].status.objid;
 
-    if (nitems < pageVolume) {
-        touchEnd = true;
-    }
-
     var totalHeight = 0;
     var itemid = 0;
  
@@ -138,6 +134,10 @@ function ShowNewFaultPage(pagecontent, pageid, requestPar) {
             var beginoffset = pageInfo.offset;
             var endoffset = pageInfo.offset + itemid - 1;
             $("#page_tip").append(beginoffset + "-" + endoffset + " of " + pageInfo.nitems);
+
+            if (endoffset >= pageInfo.nitems) {
+                touchEnd = true;
+            }
         }
     });
 }
@@ -816,7 +816,7 @@ function AddRecordList(recordContent) {
             var result = stringToBytes(data);
 
             if (result[0] == 1) {
-                showRightInfoBox("故障保存成功");
+                showRightInfoBox("故障已提交，系统将会通知相关人员进行处理");
 
                 document.getElementById("recordcontent").value = "";
 

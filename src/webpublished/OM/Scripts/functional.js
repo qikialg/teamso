@@ -1,3 +1,4 @@
+
 var OldExhibitionPlace = null;
 
 var OldFloorNum = 1;
@@ -40,36 +41,24 @@ var MoreFlag;
 var serviceUrl = "http://113.12.226.243:9006/eventelement.aspx";
 var pageFirstID = new Array();
 var pageLastID = new Array();
-//var nItemInPage = new Array();
 var newFaultPageID = 0;
 var touchEnd = false;
 var pageVolume = 11;    // the upper of item that one page can hold
 var oneLineHeight = 46;
 var twoLineHeight = 66;
 
-
-
-function getQueryString(name) {         	
-   var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");    
-	  	
-   var r = window.location.search.substr(1).match(reg);    
-	  	
-   if (r != null) return unescape(r[2]); return null;    
-	  	
-    }
-
-
 // show new fault page
-function ShowNewFaultPage(pagecontent, pageid, requestPar) {
+function ShowNewFaultPage(pagecontent, pageid) {
     if (pagecontent.length <= 3) {
         return;
     }
 
     //clean old data
-    $("#recordlistul").html("");
+    $("#recordlistul").innerHTML = "";
+
     var items = JSON.parse(pagecontent);
     var nitems = items.length;
-    var oneLineMaxBytes = 18;
+    var oneLineMaxBytes = 36;
 
     //  set first item id
     pageFirstID[pageid] = items[0].status.objid;
@@ -80,7 +69,6 @@ function ShowNewFaultPage(pagecontent, pageid, requestPar) {
 
     var totalHeight = 0;
     var itemid = 0;
- 
 
     while (itemid <= (nitems - 1)) {
         var innerHTML = "<li>";
@@ -97,7 +85,7 @@ function ShowNewFaultPage(pagecontent, pageid, requestPar) {
         }
 
         //  exceed the list
-        if (totalHeight > 460) {
+        if (totalHeight > 445) {
             break;
         }
 
@@ -120,40 +108,19 @@ function ShowNewFaultPage(pagecontent, pageid, requestPar) {
 
         itemid++;
     }
-    
-    //  save item number in the page
-    //nItemInPage[pageid] = itemid;
 
-    //  change page id
-    if (newFaultPageID > pageid) {  //  backward
-        touchEnd = false;
-    }
-    newFaultPageID = pageid;
-
-
-    //  set page information
-    var par = { oc: "gpm", sbegin: requestPar.sbegin, send: requestPar.send, lastobjid: items[0].status.objid, status: requestPar.status };
-    $.ajax({
-        type: "POST",
-        url: serviceUrl,
-        data: par,
-        success: function (data) {
-            var pageInfo = JSON.parse(data);
-            $("#page_tip").html("");
-            var beginoffset = pageInfo.offset;
-            var endoffset = pageInfo.offset + itemid - 1;
-            $("#page_tip").append(beginoffset + "-" + endoffset + " Of " + pageInfo.nitems);
-        }
-    });
 }
 
 //  get perticular new faults page
 function GetNewFaultPage(pageid) {
-    if ((pageid > newFaultPageID) && touchEnd) {   //  forward
+    if ((pageid < 0) || touchEnd) {
         return;
     }
-    else if ((pageid < newFaultPageID) && (pageid < 0)) {   //  backward
-        return;
+
+    var firstid = pageFirstID[pageid];
+    if (firstid == null) {
+        pageFirstID.push("0");
+        pageLastID.push("0");
     }
 
     var lastid = "0";
@@ -163,6 +130,7 @@ function GetNewFaultPage(pageid) {
 
     var today = new Date();
     today.setHours(0, 0, 0, 0);
+
     var tomorrow = new Date();
     tomorrow.setDate(today.getDate()+1);
     tomorrow.setHours(0, 0, 0, 0);
@@ -170,7 +138,6 @@ function GetNewFaultPage(pageid) {
     var begin = Date.parse(today);
     var end = Date.parse(tomorrow);
     var fetchPathPar = { oc: "ff", sbegin: begin, send: end, lastobjid: lastid, ntuples: pageVolume, status: 1 }; // fetch first 11 fault, 11 is enough for one page
-    var pageTipPar = { sbegin: begin, send: end, ntuples: pageVolume, status: 1 };
 
     //  fetch fault data
     $.ajax({
@@ -178,7 +145,7 @@ function GetNewFaultPage(pageid) {
         url: serviceUrl,
         data: fetchPathPar,
         success: function (data) {
-            ShowNewFaultPage(data, pageid, pageTipPar);
+            ShowNewFaultPage(data, pageid);
         }
     });
 }
@@ -220,7 +187,7 @@ function DetailPageOnLoad() {
 function InitDetail() {
     var UrlValue = window.location.search;
 
-    UrlValue = getQueryString("oid");;
+    UrlValue = UrlValue.substr(1, UrlValue.length - 1);
 
     var RequestUrl = "http://113.12.226.243:9006/eventelement.aspx?oc=faf&oid=" + UrlValue;
 
@@ -240,7 +207,7 @@ function InitDetailDiv(data) {
 
     var fault_div_content = "<b>" + obj.floor_name + "</b> > <b>" + obj.hall_name + "</b> > <b>" + obj.subject_name + "</b><br/>";
 
-    fault_div_content += "<h2>æ–°æ•…éšœ</h2>";
+    fault_div_content += "<h2>ĞÂ¹ÊÕÏ</h2>";
 
     tempcontenet = unescape(obj.fault_report);
 
@@ -252,7 +219,7 @@ function InitDetailDiv(data) {
 
     fault_div_content += "<br />";
 
-    fault_div_content += "<div class=\"text_r\">" + MillionSecondToDate(obj.date.$date, 1) + " æŸäºº</div>";
+    fault_div_content += "<div class=\"text_r\">" + MillionSecondToDate(obj.date.$date, 1) + " Ä³ÈË</div>";
 
     fault_div.innerHTML = fault_div_content;
 
@@ -375,11 +342,11 @@ function htmldeescape(content) {
 }
 
 function RN2BR(content) {
-    var regExp = new RegExp("\r", "g");
-    content = content.replace(regExp, "");
-    var regExp1 = new RegExp("\n", "g");
-    content = content.replace(regExp1, "<br/>");
-     return content;	
+    var regExp = new RegExp("\r\n", "g");
+
+    content = content.replace(regExp, "<br/>");
+
+    return content;
 }
 
 function stringToBytes(str) {
@@ -419,10 +386,10 @@ function MillionSecondToDate(p,format) {
 
     switch (format) {
         case 0:
-            datestring = (mydate.getMonth() + 1) + "æœˆ" + mydate.getDate() + "æ—¥";
+            datestring = (mydate.getMonth() + 1) + "ÔÂ" + mydate.getDate() + "ÈÕ";
             break;
         case 1:
-            datestring = mydate.getFullYear() + "å¹´" + (mydate.getMonth() + 1) + "æœˆ" + mydate.getDate() + "æ—¥  ";
+            datestring = mydate.getFullYear() + "Äê" + (mydate.getMonth() + 1) + "ÔÂ" + mydate.getDate() + "ÈÕ  ";
 
             timevalue = mydate.getHours();
 
@@ -659,7 +626,7 @@ function InitExhibitionHall(ExhibitionHallContent) {
 
     HandleRequest = true;
 
-    url = "http://113.12.226.243:9006/eventelement.aspx?oc=hi&fc=" + ExhibitionHallContent + "æ¥¼";
+    url = "http://113.12.226.243:9006/eventelement.aspx?oc=hi&fc=" + ExhibitionHallContent + "Â¥";
 
     $.post(url, function (data) {
 
@@ -764,13 +731,13 @@ function AddRecordList(recordContent) {
     }
 
     if (recordContent == "") {
-        alert("æ•…éšœæè¿°ä¸èƒ½ä¸ºç©º");
+        alert("¹ÊÕÏÃèÊö²»ÄÜÎª¿Õ");
 
         return;
     }
     else {
         if ((OldExhibitionHall == null) || (OldExhibitionPlace == null)) {
-            alert("è¯·å…ˆé€‰æ‹©å®Œå¿…è¦çš„ä¿¡æ¯");
+            alert("ÇëÏÈÑ¡ÔñÍê±ØÒªµÄĞÅÏ¢");
 
             return;
         }
@@ -810,15 +777,15 @@ function AddRecordList(recordContent) {
 
             if (result[0] == 1) {
 
-                showRightInfoBox("ä¿å­˜æˆåŠŸ");
+                showRightInfoBox("±£´æ³É¹¦");
 
                 document.getElementById("recordcontent").value = "";
 
                 OldFloorNum = 0;
 
                 FloorClick(1);
-                GetNewFaultPage(0);
-                //InitFaultList();
+
+                InitFaultList();
             }
             else {
             }
@@ -847,14 +814,14 @@ function ChangeRecordPosition() {
 
     var positionobj = document.getElementById("recordposition");
 
-    var positioncontent = "<p>æ•…éšœä½ç½®ï¼š ";
+    var positioncontent = "<p>¹ÊÕÏÎ»ÖÃ£º ";
 
     if (OldFloorNum != null) {
         positioncontent += "<b><a href=\"#\" onclick=\"RecordPositionClick(1)\">";
 
         positioncontent += OldFloorNum;
 
-        positioncontent += "æ¥¼</a></b>";
+        positioncontent += "Â¥</a></b>";
 
         if ((OldExhibitionHall != null) && (Level >= 2)) {
             positioncontent += " > <b><a href=\"#\" onclick=\"RecordPositionClick(2)\">";

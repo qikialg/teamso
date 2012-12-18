@@ -222,37 +222,6 @@ function InitDetailDiv(data) {
     fault_div_content += "<div class=\"text_r\">" + MillionSecondToDate(obj.date.$date, 1) + " Ä³ÈË</div>";
 
     fault_div.innerHTML = fault_div_content;
-
-//    switch (parseInt(obj[0].status)) {
-//        case 1:
-//            document.getElementById("Bug").src = "images/bugbtn1_2.gif";
-//            break;
-//        case 2:
-//            break;
-//        case 4:
-//            document.getElementById("Bug").src = "images/bugbtn1_2.gif";
-//            break;
-//        case 8:
-//            document.getElementById("NoBug").src = "images/bugbtn2_2.gif";
-//            break;
-//        case 16:
-//            document.getElementById("Repeat").src = "images/bugbtn4_2.gif";
-//            break;
-//        case 32:
-//            document.getElementById("Closed").src = "images/bugbtn3_2.gif";
-//            break;
-//        case 64:
-//            document.getElementById("Processing").src = "images/bugbtn5_2.gif";
-//            break;
-//        case 128:
-//            break;
-//        case 256:
-//            break;
-//        case 512:
-//            document.getElementById("Fixed").src = "images/bugbtn6_2.gif";
-//            break;
-
-//    }
 }
 
 function showRightInfoBox(content) {

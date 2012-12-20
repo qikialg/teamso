@@ -199,11 +199,8 @@ function HomePageOnLoad() {
     InitDivAndCSS();
 
     //InitFaultList();
-
     InitExhibitionHall(1);
-
     ChangeRecordPosition();
-
     GetNewFaultPage(newFaultPageID);
 }
 
@@ -283,6 +280,7 @@ function InitDetailDiv(data) {
 //    }
 }
 
+//  alternative for alert dialog
 function showRightInfoBox(content) {
     var rightInfoBox = $("#right_info");
     rightInfoBox.hide();
@@ -291,12 +289,13 @@ function showRightInfoBox(content) {
     rightInfoBox.fadeOut(4000);
 }
 
+//  warning/error information dialog
 function showWrongInfoBox(content) {
     var rightInfoBox = $("#wrong_info");
     rightInfoBox.hide();
     rightInfoBox.text(content);
     rightInfoBox.fadeIn('slow');
-    rightInfoBox.fadeOut(7000);
+    rightInfoBox.fadeOut(8000);
 }
 
 function ShortenContent(content) {
@@ -494,6 +493,7 @@ function Move(direction) {
 
 }
 
+//---------------------------------- place selection -------------------------------------------------------------
 function ClearExhibitionHallClickStatus() {
     if (OldExhibitionHall != null) {
 
@@ -629,9 +629,7 @@ function ExhibitionPlaceClick(ExhibitionPlaceID) {
 
 
 function InitExhibitionDiv(data) {
-
     var obj = jQuery.parseJSON(data);
-
     var content = "";
 
     content += "<div class=\"select_l\">";
@@ -718,7 +716,6 @@ function InitExhibitionPlace(ExhibitionHallID) {
 }
 
 function FloorClick(FloorNumber) {
-
     if ((HandleRequest == true) || (MoveFlag == false)) {
         return;
     }

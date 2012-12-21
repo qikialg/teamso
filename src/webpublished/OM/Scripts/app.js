@@ -2,7 +2,7 @@ var ServerAddr = "113.12.226.243";
 var appPort = "9006";
 var TCPRequestHeader = "http://";
 var eventBusiness = "eventelement.aspx";
-var faultNameMap = new Array("æ–°æ•…éšœ", "æœªè¯»", "æ˜¯æ•…éšœ", "éæ•…éšœ", "é‡å¤æŠ¥ä¿®", "æœªå¼€å¯", "å¤„ç†ä¸­", "å·²ä¸ŠæŠ¥", "å‚å•†ç»´ä¿®ä¸­", "å‚å•†ç»´ä¿®å®Œæ¯•");
+var faultNameMap = new Array("ĞÂ¹ÊÕÏ", "Î´¶Á", "ÊÇ¹ÊÕÏ", "·Ç¹ÊÕÏ", "ÖØ¸´±¨ĞŞ", "Î´¿ªÆô", "´¦ÀíÖĞ", "ÒÑÉÏ±¨", "³§ÉÌÎ¬ĞŞÖĞ", "³§ÉÌÎ¬ĞŞÍê±Ï");
 function N2FaultName(code) {
     var name = "unknow";
     

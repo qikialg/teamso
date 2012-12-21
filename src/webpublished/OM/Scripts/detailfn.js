@@ -14,7 +14,7 @@ function showFaultDetail(data) {
         mainContent.append(unescaptedContent + "<br/>");
         
         var commitDate = new Date(firstContent.date.$date);
-        mainContent.append("<div class=\"text_r\">" + commitDate.getFullYear() + "å¹´" + commitDate.getMonth() + "æœˆ" + commitDate.getDate() + "æ—¥ " + commitDate.toLocaleTimeString() +"</div>");
+        mainContent.append("<div class=\"text_r\">" + commitDate.getFullYear() + "Äê" + commitDate.getMonth() + "ÔÂ" + commitDate.getDate() + "ÈÕ " + commitDate.toLocaleTimeString() +"</div>");
     }
 }
 

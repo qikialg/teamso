@@ -715,6 +715,10 @@ function InitExhibitionPlace(ExhibitionHallID) {
         else {
             var hallobj = document.getElementById(ExhibitionHallID);
 
+            ClearExhibitionPlaceClickStatus();
+
+            OldExhibitionPlace = null;
+
             Level = 2;
 
             ClearExhibitionHallClickStatus();

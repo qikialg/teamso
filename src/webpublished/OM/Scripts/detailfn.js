@@ -12,9 +12,9 @@ function showFaultDetail(data) {
         mainContent.append("<b>" + firstContent.floor_name + "</b> > <b>" + firstContent.hall_name + "</b> > <b>" + firstContent.subject_name + "</b><br />");
         mainContent.append("<h2>" + N2FaultName(firstContent.status) + "</h2>");
         mainContent.append(unescaptedContent + "<br/>");
-        
+
         var commitDate = new Date(firstContent.date.$date);
-        mainContent.append("<div class=\"text_r\">" + commitDate.getFullYear() + "年" + commitDate.getMonth() + "月" + commitDate.getDate() + "日 " + commitDate.toLocaleTimeString() +"</div>");
+        mainContent.append("<div class=\"text_r\">" + commitDate.getFullYear() + "年" + commitDate.getMonth() + "月" + commitDate.getDate() + "日 " + commitDate.toLocaleTimeString() + "</div>");
     }
 }
 
@@ -38,4 +38,3 @@ function onDetailPageLoad() {
         showDetail(par);
     }
 }
-

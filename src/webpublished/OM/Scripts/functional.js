@@ -37,6 +37,8 @@ var MoveFlag;
 
 var MoreFlag;
 
+var NoExhibitionPlace;
+
 ////  new fault paging
 var serviceUrl = "http://113.12.226.243:9006/eventelement.aspx";
 var pageFirstID = new Array();
@@ -53,108 +55,129 @@ function getQueryString(name) {
     if (r != null) return unescape(r[2]); return null;    
     }
 
-// show new fault page
-function ShowNewFaultPage(pagecontent, pageid) {
-    if (pagecontent.length <= 3) {
-        return;
-    }
-
-    //clean old data
-    $("#recordlistul").innerHTML = "";
-
-    var items = JSON.parse(pagecontent);
-    var nitems = items.length;
-    var oneLineMaxBytes = 36;
-
-    //  set first item id
-    pageFirstID[pageid] = items[0].status.objid;
-
-    if (nitems < pageVolume) {
-        touchEnd = true;
-    }
-
-    var totalHeight = 0;
-    var itemid = 0;
-
-    while (itemid <= (nitems - 1)) {
-        var innerHTML = "<li>";
-
-        var rawFaultContent = items[itemid].fault.fault_report;
-        var byteCode = rawFaultContent.replace(/%u/g, "");
-        var byteCodeLen = byteCode.length;
-
-        if ((byteCodeLen * 0.5) > oneLineMaxBytes) {
-            totalHeight += twoLineHeight;
-        }
-        else {
-            totalHeight += oneLineHeight;
+    // show new fault page
+    function ShowNewFaultPage(pagecontent, pageid, requestPar) {
+        if (pagecontent.length <= 3) {
+            return;
         }
 
-        //  exceed the list
-        if (totalHeight > 445) {
-            break;
+        //clean old data
+        $("#recordlistul").html("");
+        var items = JSON.parse(pagecontent);
+        var nitems = items.length;
+        var oneLineMaxBytes = 18;
+
+        //  set first item id
+        pageFirstID[pageid] = items[0].status.objid;
+
+        var totalHeight = 0;
+        var itemid = 0;
+
+
+        while (itemid <= (nitems - 1)) {
+            var innerHTML = "<li>";
+
+            var rawFaultContent = items[itemid].fault.fault_report;
+            var byteCode = rawFaultContent.replace(/%u/g, "");
+            var byteCodeLen = byteCode.length;
+
+            if ((byteCodeLen * 0.5) > oneLineMaxBytes) {
+                totalHeight += twoLineHeight;
+            }
+            else {
+                totalHeight += oneLineHeight;
+            }
+
+            //  exceed the list
+            if (totalHeight > 460) {
+                break;
+            }
+
+            var unescapted = unescape(rawFaultContent);
+            var truncated = unescapted.substr(0, 19);
+            if (truncated.length < unescapted.length) {
+                truncated += "...";
+            }
+            var recognized = htmldeescape(truncated);
+            var detailPageUrl = "detail.html?oid=" + items[itemid].status.objid;
+
+            innerHTML += "<a href=\"" + detailPageUrl + "\">" + recognized + "</a>";
+            innerHTML += "<div class=\"list_r\"><a href=\"" + detailPageUrl + "\">" + "- " + MillionSecondToDate(items[itemid].status.date.$date, 0) + "</a></div>";
+            innerHTML += "<div class=\"clear\"></div>";
+            innerHTML += "</li>";
+            $("#recordlistul").append(innerHTML);
+
+            //  set last item id
+            pageLastID[pageid] = items[itemid].status.objid;
+
+            itemid++;
         }
 
-        var unescapted = unescape(rawFaultContent);
-        var truncated = unescapted.substr(0, 19);
-        if (truncated.length < unescapted.length) {
-            truncated += "...";
+        //  save item number in the page
+        //nItemInPage[pageid] = itemid;
+
+        //  change page id
+        if (newFaultPageID > pageid) {  //  backward
+            touchEnd = false;
         }
-        var recognized = htmldeescape(truncated);
-        var detailPageUrl = "detail.html?oid=" + items[itemid].status.objid;
+        newFaultPageID = pageid;
 
-        innerHTML += "<a href=\"" + detailPageUrl + "\">" + recognized + "</a>";
-        innerHTML += "<div class=\"list_r\"><a href=\"" + detailPageUrl + "\">" + "- " + MillionSecondToDate(items[itemid].status.date.$date, 0) + "</a></div>";
-        innerHTML += "<div class=\"clear\"></div>";
-        innerHTML += "</li>";
-        $("#recordlistul").append(innerHTML);
 
-        //  set last item id
-        pageLastID[pageid] = items[itemid].status.objid;
+        //  set page information
+        var par = { oc: "gpm", sbegin: requestPar.sbegin, send: requestPar.send, lastobjid: items[0].status.objid, status: requestPar.status };
+        $.ajax({
+            type: "POST",
+            url: serviceUrl,
+            data: par,
+            success: function (data) {
+                var pageInfo = JSON.parse(data);
+                $("#page_tip").html("");
+                var beginoffset = pageInfo.offset;
+                var endoffset = pageInfo.offset + itemid - 1;
+                $("#page_tip").append(beginoffset + "-" + endoffset + " of " + pageInfo.nitems);
 
-        itemid++;
+                if (endoffset >= pageInfo.nitems) {
+                    touchEnd = true;
+                }
+            }
+        });
     }
 
-}
-
-//  get perticular new faults page
-function GetNewFaultPage(pageid) {
-    if ((pageid < 0) || touchEnd) {
-        return;
-    }
-
-    var firstid = pageFirstID[pageid];
-    if (firstid == null) {
-        pageFirstID.push("0");
-        pageLastID.push("0");
-    }
-
-    var lastid = "0";
-    if (pageid > 0) {
-        lastid = pageLastID[pageid - 1];
-    }
-
-    var today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    var tomorrow = new Date();
-    tomorrow.setDate(today.getDate()+1);
-    tomorrow.setHours(0, 0, 0, 0);
-
-    var begin = Date.parse(today);
-    var end = Date.parse(tomorrow);
-    var fetchPathPar = { oc: "ff", sbegin: begin, send: end, lastobjid: lastid, ntuples: pageVolume, status: 1 }; // fetch first 11 fault, 11 is enough for one page
-
-    //  fetch fault data
-    $.ajax({
-        type: "POST",
-        url: serviceUrl,
-        data: fetchPathPar,
-        success: function (data) {
-            ShowNewFaultPage(data, pageid);
+    //  get perticular new faults page
+    function GetNewFaultPage(pageid) {
+        if ((pageid > newFaultPageID) && touchEnd) {   //  forward
+            return;
         }
-    });
-}
+        else if ((pageid < newFaultPageID) && (pageid < 0)) {   //  backward
+            return;
+        }
+
+        var lastid = "0";
+        if (pageid > 0) {
+            lastid = pageLastID[pageid - 1];
+        }
+
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        var tomorrow = new Date();
+        tomorrow.setDate(today.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+
+        var begin = Date.parse(today);
+        var end = Date.parse(tomorrow);
+        var fetchPathPar = { oc: "ff", sbegin: begin, send: end, lastobjid: lastid, ntuples: pageVolume, status: 1 }; // fetch first 11 fault, 11 is enough for one page
+        var pageTipPar = { sbegin: begin, send: end, ntuples: pageVolume, status: 1 };
+
+        //  fetch fault data
+        $.ajax({
+            type: "POST",
+            url: serviceUrl,
+            data: fetchPathPar,
+            success: function (data) {
+                ShowNewFaultPage(data, pageid, pageTipPar);
+            }
+        });
+    }
 
 jQuery.fn.center = function () {
     this.css("position", "absolute");
@@ -185,7 +208,7 @@ function HomePageOnLoad() {
     GetNewFaultPage(newFaultPageID);
 }
 
-function DetailPageOnLoad() {
+function DetailPageLoad() {
 
     InitDetail();
 }
@@ -234,6 +257,15 @@ function showRightInfoBox(content) {
     rightInfoBox.text(content);
     rightInfoBox.fadeIn('slow');
     rightInfoBox.fadeOut(4000);
+}
+
+//  warning/error information dialog
+function showWrongInfoBox(content) {
+    var rightInfoBox = $("#wrong_info");
+    rightInfoBox.hide();
+    rightInfoBox.text(content);
+    rightInfoBox.fadeIn('slow');
+    rightInfoBox.fadeOut(8000);
 }
 
 function ShortenContent(content) {
@@ -487,34 +519,33 @@ function ExhibitionHallClick(ExhibitionHallID) {
         return;
     }
 
-    //alert(ExhibitionHallID);
+    InitExhibitionPlace(ExhibitionHallID);
 
-    var obj = document.getElementById(ExhibitionHallID);
+//    var obj = document.getElementById(ExhibitionHallID);
 
-    Level = 3;
+//    Level = 3;
 
-    InitDivAndCSS();
+//    InitDivAndCSS();
 
-    if ((OldExhibitionHall == null) || (obj.className != "liselectstyle")) {
-        ClearExhibitionPlaceClickStatus();
+//    if ((OldExhibitionHall == null) || (obj.className != "liselectstyle")) {
+//        ClearExhibitionPlaceClickStatus();
 
-        OldExhibitionPlace = null;
+//        OldExhibitionPlace = null;
 
-        InitExhibitionPlace(ExhibitionHallID);
-    }
+//        InitExhibitionPlace(ExhibitionHallID);
+//    }
 
-    ClearExhibitionHallClickStatus();
+//    else
+//    {
+//    ClearExhibitionHallClickStatus();
 
-    OldExhibitionHall = obj;
+//    OldExhibitionHall = obj;
 
-    SetExhibitionHallClickStatus();
+//    SetExhibitionHallClickStatus();
 
-    ChangeRecordPosition();
+//    ChangeRecordPosition();
 
-    document.getElementById("navbutton").innerHTML = "<a href=\"#\"><img src=\"images/btn_left.png\" border=\"0\" onclick=\"ButtonLeftClick()\"/></a>";
-
-    Move(2);
-
+//    document.getElementById("navbutton").innerHTML = "<a href=\"#\"><img src=\"images/btn_left.png\" border=\"0\" onclick=\"ButtonLeftClick()\"/></a>";
 }
 
 function ButtonLeftClick() {
@@ -611,32 +642,58 @@ function InitExhibitionHall(ExhibitionHallContent) {
     });
 }
 
-function InitExhibitionPlaceDiv(data) {
-    var obj = jQuery.parseJSON(data);
+function InitExhibitionPlaceDiv(data,ExhibitionHallID) {
 
-    var content = "";
+    var hallobj = document.getElementById(ExhibitionHallID);
 
-    content += "<div class=\"select_l\">";
+    InitDivAndCSS();
 
-    content += "<ul>";
+    if ((OldExhibitionHall == null) || (hallobj.className != "liselectstyle")) {
 
-    if (obj != null) {
-        var len = obj.subjectsID.length;
+        var obj = jQuery.parseJSON(data);
 
-        for (var i = 0; i < len; i++) {
-            content += "<li class=\"listyle\" id=\"" + obj.HallID + "@" + obj.subjectsID[i].gid + "\" onclick=\"ExhibitionPlaceClick('" + obj.HallID + "@" + obj.subjectsID[i].gid + "')\"><a href=\"#\"><div class=\"navrightpic\"><div class=\"textcolor\">" + obj.subjectsID[i].name + "</div></div></a></li>";
+        var content = "";
+
+        content += "<div class=\"select_l\">";
+
+        content += "<ul>";
+
+        if (obj != null) {
+            var len = obj.subjectsID.length;
+
+            for (var i = 0; i < len; i++) {
+                content += "<li class=\"listyle\" id=\"" + obj.HallID + "@" + obj.subjectsID[i].gid + "\" onclick=\"ExhibitionPlaceClick('" + obj.HallID + "@" + obj.subjectsID[i].gid + "')\"><a href=\"#\"><div class=\"navrightpic\"><div class=\"textcolor\">" + obj.subjectsID[i].name + "</div></div></a></li>";
+            }
         }
+
+        content += "</ul>";
+
+        content += "<div class=\"clear\"></div>";
+
+        content += "</div>";
+
+        content += "<div class=\"clear\"></div>";
+
+
+        ClearExhibitionPlaceClickStatus();
+
+        OldExhibitionPlace = null;
+
+        ShowDiv.innerHTML = content;
     }
+    Level = 3;
 
-    content += "</ul>";
+    ClearExhibitionHallClickStatus();
 
-    content += "<div class=\"clear\"></div>";
+    OldExhibitionHall = hallobj;
 
-    content += "</div>";
+    SetExhibitionHallClickStatus();
 
-    content += "<div class=\"clear\"></div>";
+    ChangeRecordPosition();
 
-    ShowDiv.innerHTML = content;
+    document.getElementById("navbutton").innerHTML = "<a href=\"#\"><img src=\"images/btn_left.png\" border=\"0\" onclick=\"ButtonLeftClick()\"/></a>";
+
+    Move(2);
 
     HandleRequest = false;
 }
@@ -649,7 +706,31 @@ function InitExhibitionPlace(ExhibitionHallID) {
 
     $.post(url, function (data) {
 
-        InitExhibitionPlaceDiv(data);
+        if (data != "") {
+
+            NoExhibitionPlace = false;
+
+            InitExhibitionPlaceDiv(data, ExhibitionHallID);
+        }
+        else {
+            var hallobj = document.getElementById(ExhibitionHallID);
+
+            Level = 2;
+
+            ClearExhibitionHallClickStatus();
+
+            OldExhibitionHall = hallobj;
+
+            SetExhibitionHallClickStatus();
+
+            ChangeRecordPosition();
+
+            HandleRequest = false;
+
+            NoExhibitionPlace = true;
+        }
+
+        CheckSaveButtonEnable();
     });
 
 }
@@ -708,13 +789,13 @@ function AddRecordList(recordContent) {
     }
 
     if (recordContent == "") {
-        alert("故障描述不能为空");
+        showWrongInfoBox("故障描述为空，请对故障进行说明");
 
         return;
     }
     else {
-        if ((OldExhibitionHall == null) || (OldExhibitionPlace == null)) {
-            alert("请先选择完必要的信息");
+        if ((OldExhibitionHall == null) || ((NoExhibitionPlace == false) && (OldExhibitionPlace == null))) {
+            showWrongInfoBox("请选择 展厅、展项并对故障进行描述后再进行保存");
 
             return;
         }
@@ -732,9 +813,22 @@ function AddRecordList(recordContent) {
 
     var RequestUrl = "http://113.12.226.243:9006/eventelement.aspx";
 
-    var id = OldExhibitionPlace.id.split("@")[1];
+    var id;
 
-    var parameter = { oc: "gf", lt: 512, gid: id, content: escaptedContent };
+    var lt_value;
+
+    if (NoExhibitionPlace == true) {
+        lt_value = 1024;
+
+        id = OldExhibitionHall.id;
+    }
+    else {
+        lt_value = 512;
+
+        id = OldExhibitionPlace.id.split("@")[1];
+    }
+
+    var parameter = { oc: "gf", lt: lt_value, gid: id, content: escaptedContent };
 
     HandleRequest = true;
 
@@ -754,7 +848,7 @@ function AddRecordList(recordContent) {
 
             if (result[0] == 1) {
 
-                showRightInfoBox("保存成功");
+                showRightInfoBox("故障已提交，系统将会通知相关人员进行处理");
 
                 document.getElementById("recordcontent").value = "";
 
@@ -762,7 +856,7 @@ function AddRecordList(recordContent) {
 
                 FloorClick(1);
 
-                InitFaultList();
+                GetNewFaultPage(0);
             }
             else {
             }
@@ -892,7 +986,7 @@ function CheckSaveButtonEnable() {
 
     var SaveButtonObj = document.getElementById("SaveButton");
 
-    if ((content != "") && (OldExhibitionHall != null) && (OldExhibitionPlace != null)) {
+    if ((content != "") && (OldExhibitionHall != null) && ((NoExhibitionPlace == true) || (OldExhibitionPlace != null))) {
 
         SaveButtonObj.innerHTML = "<a href=\"#\"><img src=\"images/btn.jpg\" border=\"0\" onclick=\"SaveClick()\"/></a>";
 
@@ -901,119 +995,4 @@ function CheckSaveButtonEnable() {
 
         SaveButtonObj.innerHTML = "<a href=\"#\"><img src=\"images/btn_disable.jpg\" border=\"0\" /></a>";
     }
-}
-
-function CheckPageButton() {
-//    if (TotalPage > 1) {
-//        if (CurrentPage == 0) {
-//            document.getElementById("FirstPage").src = "images/first_disable.jpg";
-
-//            document.getElementById("PrevPage").src = "images/prev_disable.jpg";
-
-//            document.getElementById("NextPage").src = "images/next.jpg";
-
-//            document.getElementById("LastPage").src = "images/last.jpg";
-//        }
-//        else if ((CurrentPage > 0) && (CurrentPage < (TotalPage - 1))) {
-//            document.getElementById("FirstPage").src = "images/first.jpg";
-
-//            document.getElementById("PrevPage").src = "images/prev.jpg";
-
-//            document.getElementById("NextPage").src = "images/next.jpg";
-
-//            document.getElementById("LastPage").src = "images/last.jpg";
-//        }
-//        else {
-//            document.getElementById("FirstPage").src = "images/first.jpg";
-
-//            document.getElementById("PrevPage").src = "images/prev.jpg";
-
-//            document.getElementById("NextPage").src = "images/next_disable.jpg";
-
-//            document.getElementById("LastPage").src = "images/last_disable.jpg";
-//        }
-//    }
-}
-
-function FirstPageClick() {
-
-    var begin,end;
-
-    CurrentPage = 0;
-
-    begin = 0;
-
-    end = (CurrentPage + 1) * ShowFaultCount;
-
-    end = end > FaultListObj.length ? FaultListObj.length : end;
-
-    InitFaultListDiv(begin, end);
-
-    CheckPageButton();
-}
-
-function PrevPageClick() {
-
-    var begin, end;
-
-    var OldPage = CurrentPage;
-
-    CurrentPage--;
-
-    if (CurrentPage >= 0) {
-
-        begin = CurrentPage * ShowFaultCount;
-
-        end = OldPage * ShowFaultCount;
-
-        InitFaultListDiv(begin, end);
-    }
-    else {
-        CurrentPage = 0;
-    }
-
-    CheckPageButton();
-}
-
-function NextPageClick() {
-
-    var begin, end;
-
-    var OldPage = CurrentPage;
-
-    CurrentPage++;
-
-    if (CurrentPage < TotalPage) {
-
-        begin = CurrentPage * ShowFaultCount;
-
-        end = (CurrentPage + 1) * ShowFaultCount;
-
-        end = end > FaultListObj.length ? FaultListObj.length : end;
-
-        InitFaultListDiv(begin, end);
-
-    }
-    else {
-        CurrentPage = TotalPage - 1;
-    }
-
-    CheckPageButton();
-}
-
-function LastPageClick() {
-
-    var begin, end;
-
-    CurrentPage = TotalPage - 1;
-
-    begin = CurrentPage * ShowFaultCount;
-
-    begin = begin < 0 ? 0 : begin;
-
-    end = FaultListObj.length;
-
-    InitFaultListDiv(begin, end);
-
-    CheckPageButton();
 }

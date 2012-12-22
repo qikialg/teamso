@@ -17,8 +17,6 @@ var Level = 1;
 
 var IsFirstTime = true;
 
-var HandleRequest = false;
-
 var ShowFaultCount = 6;
 
 var CharPerLine = 18;
@@ -38,6 +36,12 @@ var MoveFlag;
 var MoreFlag;
 
 var NoExhibitionPlace;
+
+var RequestInterval = null;
+
+var RequestType = 0;
+
+var RequestParameter;
 
 ////  new fault paging
 var serviceUrl = "http://113.12.226.243:9006/eventelement.aspx";
@@ -193,6 +197,37 @@ jQuery.fn.centerObj = function (relObj) {
     this.css("top", Math.max(0, ((relObj.height() - $(this).outerHeight()) / 2) + relObj.position().top + parseInt(relObj.css("marginTop"))) + "px");
     this.css("left", Math.max(0, ((relObj.width() - $(this).outerWidth()) / 2) + relObj.position().left + parseInt(relObj.css("marginLeft"))) + "px");
     return this;
+}
+
+function Interval_TimeOut() {
+
+    switch (RequestType) {
+        case 0:
+            InitFloorDiv(RequestParameter);
+            break;
+        case 1:
+            InitExhibitionPlace(RequestParameter);
+            break;
+        case 2:
+            AddRecordList(RequestParameter);
+            break;
+    }
+
+    clearInterval(RequestInterval);
+
+    RequestInterval = null;
+
+}
+
+function SendRequest(par) {
+
+    if (RequestInterval == null) {
+
+        RequestParameter = par;
+
+        RequestInterval = setInterval(Interval_TimeOut, 200);
+    }
+
 }
 
 function HomePageOnLoad() {
@@ -409,9 +444,6 @@ function MillionSecondToDate(p,format) {
 
 function MoveFinish() {
 
-
-    HandleRequest = false;
-
     MoveFlag = true;
 
     ShowDiv.style.zIndex = 1;
@@ -496,46 +528,23 @@ function SetExhibitionPlaceClickStatus() {
 
 function ExhibitionHallClick(ExhibitionHallID) {
 
-    if ((HandleRequest == true) || (MoveFlag == false)) {
+    if (MoveFlag == false) {
         return;
     }
 
-    InitExhibitionPlace(ExhibitionHallID);
+    if (RequestType != 2) {
+        RequestType = 1;
+    }
 
-//    var obj = document.getElementById(ExhibitionHallID);
-
-//    Level = 3;
-
-//    InitDivAndCSS();
-
-//    if ((OldExhibitionHall == null) || (obj.className != "liselectstyle")) {
-//        ClearExhibitionPlaceClickStatus();
-
-//        OldExhibitionPlace = null;
-
-//        InitExhibitionPlace(ExhibitionHallID);
-//    }
-
-//    else
-//    {
-//    ClearExhibitionHallClickStatus();
-
-//    OldExhibitionHall = obj;
-
-//    SetExhibitionHallClickStatus();
-
-//    ChangeRecordPosition();
-
-//    document.getElementById("navbutton").innerHTML = "<a href=\"#\"><img src=\"images/btn_left.png\" border=\"0\" onclick=\"ButtonLeftClick()\"/></a>";
+    SendRequest(ExhibitionHallID);
 }
 
 function ButtonLeftClick() {
 
-    if (HandleRequest == true) {
+    if (MoveFlag == false) {
         return;
     }
 
-    HandleRequest = true;
     InitDivAndCSS();
     document.getElementById("navbutton").innerHTML = "<a href=\"#\"><img src=\"images/btn_right.png\" border=\"0\" onclick=\"ButtonRightClick()\"/></a>"
     Level = 2;
@@ -545,11 +554,10 @@ function ButtonLeftClick() {
 
 function ButtonRightClick() {
 
-    if (HandleRequest == true) {
+    if (MoveFlag == false) {
         return;
     }
     if (OldExhibitionPlace != null) {
-        HandleRequest = true;
         InitDivAndCSS();
         document.getElementById("navbutton").innerHTML = "<a href=\"#\"><img src=\"images/btn_left.png\" border=\"0\" onclick=\"ButtonLeftClick()\"/></a>";
         Level = 3;
@@ -560,13 +568,11 @@ function ButtonRightClick() {
 
 function ExhibitionPlaceClick(ExhibitionPlaceID) {
 
-    if (HandleRequest == true) {
+    if (MoveFlag == false) {
         return;
     }
 
     ClearExhibitionPlaceClickStatus();
-
-    //alert(ExhibitionPlaceID);
 
     OldExhibitionPlace = document.getElementById(ExhibitionPlaceID);
 
@@ -616,9 +622,7 @@ function InitExhibitionHall(ExhibitionHallContent) {
 
     var fc_value = ExhibitionHallContent + "楼";
 
-    var parameter = { oc: "hi", fc: fc_value};
-
-    HandleRequest = true;
+    var parameter = { oc: "hi", fc: fc_value };
 
     $.ajax(
     {
@@ -636,7 +640,6 @@ function InitExhibitionHall(ExhibitionHallContent) {
 
         error: function () {
 
-            HandleRequest = false;
             showWrongInfoBox("网络状况不好或者服务器错误，请重新发送请求.");
 
         }
@@ -695,17 +698,14 @@ function InitExhibitionPlaceDiv(data,ExhibitionHallID) {
     document.getElementById("navbutton").innerHTML = "<a href=\"#\"><img src=\"images/btn_left.png\" border=\"0\" onclick=\"ButtonLeftClick()\"/></a>";
 
     Move(2);
-
-    HandleRequest = false;
 }
 
 function InitExhibitionPlace(ExhibitionHallID) {
 
+
     var RequestUrl = "http://113.12.226.243:9006/eventelement.aspx";
 
     var parameters = { oc: "si", hc: ExhibitionHallID };
-
-    HandleRequest = true;
 
     $.ajax(
     {
@@ -741,8 +741,6 @@ function InitExhibitionPlace(ExhibitionHallID) {
 
                 ChangeRecordPosition();
 
-                HandleRequest = false;
-
                 NoExhibitionPlace = true;
             }
 
@@ -750,18 +748,38 @@ function InitExhibitionPlace(ExhibitionHallID) {
         },
 
         error: function () {
-
-            HandleRequest = false;
             showWrongInfoBox("网络状况不好或者服务器错误，请重新发送请求.");
 
         }
     });
 
-}
+    }
+
+    function InitFloorDiv(FloorNumber) {
+        InitDivAndCSS();
+
+        Level = 1;
+
+        OldFloorNum = FloorNumber;
+
+        OldExhibitionHall = null;
+
+        ClearExhibitionPlaceClickStatus();
+
+        var floorObj = document.getElementById("floorimg");
+
+        var imgpath = "images/floor" + FloorNumber + ".jpg";
+
+        floorObj.src = imgpath;
+
+        ChangeRecordPosition();
+
+        InitExhibitionHall(RequestParameter);
+    }
 
 function FloorClick(FloorNumber) {
 
-    if ((HandleRequest == true) || (MoveFlag == false)) {
+    if (MoveFlag == false) {
         return;
     }
 
@@ -769,48 +787,21 @@ function FloorClick(FloorNumber) {
         return;
     }
 
-    InitDivAndCSS();
-
-    Level = 1;
-
-    OldFloorNum = FloorNumber;
-
-    OldExhibitionHall = null;
-
-    ClearExhibitionPlaceClickStatus();
-
-    var floorObj = document.getElementById("floorimg");
-
-    var imgpath = "images/floor" + FloorNumber + ".jpg";
-
-    floorObj.src = imgpath;
-
-    switch (FloorNumber) {
-        case -1:
-            InitExhibitionHall(-1);
-            break;
-        case 1:
-            InitExhibitionHall(1);
-            break;
-        case 2:
-            InitExhibitionHall(2);
-            break;
-        case 3:
-            InitExhibitionHall(3);
-            break;
+    if (RequestType != 2) {
+        RequestType = 0;
     }
 
-    ChangeRecordPosition();
+    SendRequest(FloorNumber);
 }
 
 function SaveClick() {
-    AddRecordList(document.getElementById("recordcontent").value);
+
+    RequestType = 2;
+
+    SendRequest(document.getElementById("recordcontent").value);
 }
 
 function AddRecordList(recordContent) {
-    if (HandleRequest == true) {
-        return;
-    }
 
     if (recordContent == "") {
         showWrongInfoBox("故障描述为空，请对故障进行说明.");
@@ -854,8 +845,6 @@ function AddRecordList(recordContent) {
 
     var parameter = { oc: "gf", lt: lt_value, gid: id, content: escaptedContent };
 
-    HandleRequest = true;
-
     $.ajax(
     {
         type: "POST",
@@ -868,28 +857,32 @@ function AddRecordList(recordContent) {
 
         success: function (data) {
 
-            HandleRequest = false;
-
             var result = stringToBytes(data);
 
             if (result[0] == 1) {
 
                 showRightInfoBox("故障已提交，系统将会通知相关人员进行处理.");
 
-                document.getElementById("recordcontent").value = "";
-
-                OldFloorNum = 0;
-
-                FloorClick(1);
-
-                GetNewFaultPage(0);
             }
             else {
+
+                showWrongInfoBox("故障提交失败，请重新提交.");
             }
+
+            RequestType = -1;
+
+            document.getElementById("recordcontent").value = "";
+
+            OldFloorNum = 0;
+
+            FloorClick(1);
+
+            GetNewFaultPage(0);
         },
 
         error: function () {
-            HandleRequest = false;
+            RequestType = -1;
+
             showWrongInfoBox("网络状况不好或者服务器错误，请重新发送请求.");
         }
     });
@@ -898,7 +891,7 @@ function AddRecordList(recordContent) {
 
 function RecordPositionClick(LevelClick) {
 
-    if (HandleRequest == true) {
+    if (MoveFlag == false) {
         return;
     }
     switch (LevelClick) {

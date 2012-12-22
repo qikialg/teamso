@@ -864,6 +864,8 @@ function AddRecordList(recordContent) {
 
         data: parameter,
 
+        timeout: 8000,
+
         success: function (data) {
 
             HandleRequest = false;
@@ -884,6 +886,11 @@ function AddRecordList(recordContent) {
             }
             else {
             }
+        },
+
+        error: function () {
+            HandleRequest = false;
+            showWrongInfoBox("网络状况不好或者服务器错误，请重新发送请求");
         }
     });
 

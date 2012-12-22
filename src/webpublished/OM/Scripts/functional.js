@@ -199,30 +199,11 @@ function HomePageOnLoad() {
 
     InitDivAndCSS();
 
-    //InitFaultList();
-
     InitExhibitionHall(1);
 
     ChangeRecordPosition();
 
     GetNewFaultPage(newFaultPageID);
-}
-
-function DetailPageLoad() {
-
-    InitDetail();
-}
-
-function InitDetail() {
-    var UrlValue = getQueryString("oid");
-
-    var RequestUrl = "http://113.12.226.243:9006/eventelement.aspx?oc=faf&oid=" + UrlValue;
-
-    $.post(RequestUrl, function (data) {
-        InitDetailDiv(data);
-
-    });
-
 }
 
 function InitDetailDiv(data) {
@@ -631,14 +612,34 @@ function InitExhibitionDiv(data) {
 
 function InitExhibitionHall(ExhibitionHallContent) {
 
+    var RequestUrl = "http://113.12.226.243:9006/eventelement.aspx";
+
+    var fc_value = ExhibitionHallContent + "楼";
+
+    var parameter = { oc: "hi", fc: fc_value};
 
     HandleRequest = true;
 
-    url = "http://113.12.226.243:9006/eventelement.aspx?oc=hi&fc=" + ExhibitionHallContent + "楼";
+    $.ajax(
+    {
+        type: "POST",
 
-    $.post(url, function (data) {
+        url: RequestUrl,
 
-        InitExhibitionDiv(data);
+        data: parameter,
+
+        timeout: 8000,
+
+        success: function (data) {
+            InitExhibitionDiv(data);
+        },
+
+        error: function () {
+
+            HandleRequest = false;
+            showWrongInfoBox("网络状况不好或者服务器错误，请重新发送请求");
+
+        }
     });
 }
 
@@ -700,41 +701,60 @@ function InitExhibitionPlaceDiv(data,ExhibitionHallID) {
 
 function InitExhibitionPlace(ExhibitionHallID) {
 
-    url = "http://113.12.226.243:9006/eventelement.aspx?oc=si&hc=" + ExhibitionHallID;
+    var RequestUrl = "http://113.12.226.243:9006/eventelement.aspx";
+
+    var parameters = { oc: "si", hc: ExhibitionHallID };
 
     HandleRequest = true;
 
-    $.post(url, function (data) {
+    $.ajax(
+    {
+        type: "POST",
 
-        if (data != "") {
+        url: RequestUrl,
 
-            NoExhibitionPlace = false;
+        data: parameter,
 
-            InitExhibitionPlaceDiv(data, ExhibitionHallID);
-        }
-        else {
-            var hallobj = document.getElementById(ExhibitionHallID);
+        timeout: 8000,
 
-            ClearExhibitionPlaceClickStatus();
+        success: function (data) {
+            if (data != "") {
 
-            OldExhibitionPlace = null;
+                NoExhibitionPlace = false;
 
-            Level = 2;
+                InitExhibitionPlaceDiv(data, ExhibitionHallID);
+            }
+            else {
+                var hallobj = document.getElementById(ExhibitionHallID);
 
-            ClearExhibitionHallClickStatus();
+                ClearExhibitionPlaceClickStatus();
 
-            OldExhibitionHall = hallobj;
+                OldExhibitionPlace = null;
 
-            SetExhibitionHallClickStatus();
+                Level = 2;
 
-            ChangeRecordPosition();
+                ClearExhibitionHallClickStatus();
+
+                OldExhibitionHall = hallobj;
+
+                SetExhibitionHallClickStatus();
+
+                ChangeRecordPosition();
+
+                HandleRequest = false;
+
+                NoExhibitionPlace = true;
+            }
+
+            CheckSaveButtonEnable();
+        },
+
+        error: function () {
 
             HandleRequest = false;
+            showWrongInfoBox("网络状况不好或者服务器错误，请重新发送请求");
 
-            NoExhibitionPlace = true;
         }
-
-        CheckSaveButtonEnable();
     });
 
 }
@@ -920,69 +940,6 @@ function ChangeRecordPosition() {
     positionobj.innerHTML = positioncontent;
 
     CheckSaveButtonEnable();
-}
-
-function InitFaultListDiv(begin,end)
-{
-    var content;
-
-    document.getElementById("recordlistul").innerHTML = "";
-
-    var len = FaultListObj.length - 1;
-
-    for(var i = begin; i < end; i++){
-        content = "<li>";
-
-        //  fault description
-        content += "<a href=\"detail.html?" + FaultListObj[len - i].fault._id.$oid + "\">";
-        var faultcontent = unescape(FaultListObj[ len - i ].fault.fault_report);
-        content += ShortenContent(faultcontent);
-        content += "</a>";
-
-        //  presentation date
-        var datePreference = "- ";
-        content += "<div class=\"list_r\"><a href=\"#\">" + datePreference + MillionSecondToDate(FaultListObj[ len - i ].status.date.$date,0) + "</a></div>";
-
-        if (MoreFlag == false) {
-            content += "<BR/>&nbsp";
-        }
-
-        content += "<div class=\"clear\"></div>";
-
-        //  close li
-        content += "</li>";
-
-        $("#recordlistul").append(content);
-    }
-}
-
-function InitFaultList() {
-    var mydate = new Date();
-
-    var yesterday = mydate.getFullYear() + "/" + (mydate.getMonth() + 1) + "/" + (mydate.getDate() - 1);
-
-    var nextday = mydate.getFullYear() + "/" + (mydate.getMonth() + 1) + "/" + (mydate.getDate() + 1);
-
-    var begin = Date.parse(yesterday);
-
-    var end = Date.parse(nextday);
-
-    var RequestUrl = "http://113.12.226.243:9006/eventelement.aspx?oc=ff&sbegin=" + begin +"&send=" + end + "&status=1";
-
-    HandleRequest = true;
-
-    $.post(RequestUrl, function (data) {
-
-        FaultListObj = JSON.parse(data);
-
-        var length = FaultListObj.length;
-
-        TotalPage = parseInt(length / ShowFaultCount) + ((length % ShowFaultCount == 0) ? 0 : 1);
-
-        FirstPageClick();
-
-        HandleRequest = false;
-    });
 }
 
 function CheckSaveButtonEnable() {

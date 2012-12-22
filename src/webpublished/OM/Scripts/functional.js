@@ -797,9 +797,15 @@ function FloorClick(FloorNumber) {
 
 function SaveClick() {
 
-    RequestType = 2;
+    if (RequestType == 2) {
+        showWrongInfoBox("请等待当前故障提交操作完成");
 
-    SendRequest(document.getElementById("recordcontent").value);
+    }
+    else {
+        RequestType = 2;
+
+        SendRequest(document.getElementById("recordcontent").value);
+    }
 }
 
 function AddRecordList(recordContent) {

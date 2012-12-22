@@ -637,7 +637,7 @@ function InitExhibitionHall(ExhibitionHallContent) {
         error: function () {
 
             HandleRequest = false;
-            showWrongInfoBox("网络状况不好或者服务器错误，请重新发送请求");
+            showWrongInfoBox("网络状况不好或者服务器错误，请重新发送请求.");
 
         }
     });
@@ -752,7 +752,7 @@ function InitExhibitionPlace(ExhibitionHallID) {
         error: function () {
 
             HandleRequest = false;
-            showWrongInfoBox("网络状况不好或者服务器错误，请重新发送请求");
+            showWrongInfoBox("网络状况不好或者服务器错误，请重新发送请求.");
 
         }
     });
@@ -813,13 +813,13 @@ function AddRecordList(recordContent) {
     }
 
     if (recordContent == "") {
-        showWrongInfoBox("故障描述为空，请对故障进行说明");
+        showWrongInfoBox("故障描述为空，请对故障进行说明.");
 
         return;
     }
     else {
         if ((OldExhibitionHall == null) || ((NoExhibitionPlace == false) && (OldExhibitionPlace == null))) {
-            showWrongInfoBox("请选择 展厅、展项并对故障进行描述后再进行保存");
+            showWrongInfoBox("请选择 展厅、展项并对故障进行描述后再进行保存.");
 
             return;
         }
@@ -874,7 +874,7 @@ function AddRecordList(recordContent) {
 
             if (result[0] == 1) {
 
-                showRightInfoBox("故障已提交，系统将会通知相关人员进行处理");
+                showRightInfoBox("故障已提交，系统将会通知相关人员进行处理.");
 
                 document.getElementById("recordcontent").value = "";
 
@@ -890,7 +890,7 @@ function AddRecordList(recordContent) {
 
         error: function () {
             HandleRequest = false;
-            showWrongInfoBox("网络状况不好或者服务器错误，请重新发送请求");
+            showWrongInfoBox("网络状况不好或者服务器错误，请重新发送请求.");
         }
     });
 

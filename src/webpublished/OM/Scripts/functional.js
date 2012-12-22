@@ -199,6 +199,7 @@ jQuery.fn.centerObj = function (relObj) {
     return this;
 }
 
+//超时处理函数
 function Interval_TimeOut() {
 
     switch (RequestType) {

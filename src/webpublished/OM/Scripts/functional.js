@@ -796,7 +796,7 @@ function FloorClick(FloorNumber) {
 }
 
 function SaveClick() {
-
+//如果保存操作没完成,就忽略当前操作
     if (RequestType == 2) {
         showWrongInfoBox("请等待当前故障提交操作完成");
 

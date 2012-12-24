@@ -133,10 +133,9 @@ h2 { font-size:24px; font-weight:bold; line-height:42px;}
 .detail_old_b { height:15px; background:url(../images/detail_oldbox_b.gif) no-repeat;}
 .detail_old_m { background:url(../images/detail_oldbox_m.gif); padding:0 15px;}
 
-.detail_new { margin-bottom:5px;}
+.detail_new { margin-bottom:5px; margin-top:10px;}
 .detail_new_t { height:15px; background:url(../images/detail_newbox_t.gif) no-repeat;}
 .detail_new_b { height:15px; background:url(../images/detail_newbox_b.gif) no-repeat;}
 .detail_new_m { background:url(../images/detail_newbox_m.gif); padding:0 15px;}
 .detailtext { width:477px; line-height:18px; border:0; height:50px;}
 
-.old_content { height:100px;}

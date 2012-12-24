@@ -3,15 +3,19 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=GBK" />
     <title>展馆报修</title>
-    <script language="javascript" type="text/javascript" src="Scripts/jquery-1.8.3.min.js"></script>
+    <script language="javascript" type="text/javascript" src="Scripts/jquery/jquery-1.8.3.min.js"></script>
+    <script language="javascript" type="text/javascript" src="Scripts/jquery/jquery-ui-1.8.min.js"></script>
+    <script language="javascript" type="text/javascript" src="Scripts/jquery.mousewheel.min.js"></script>
+    <script language="javascript" type="text/javascript" src="Scripts/jquery.mCustomScrollbar.js"></script>
     <script language="javascript" type="text/javascript" src="Scripts/functional.js"></script>
-    <script language="javascript" type="text/javascript" src="scripts/app.js"></script>
+    <script language="javascript" type="text/javascript" src="Scripts/app.js"></script>
     <script language="javascript" type="text/javascript" src="Scripts/commonfn.js"></script>
     <script language="javascript" type="text/javascript" src="Scripts/detailfn.js"></script>
     <meta name="keywords" content="展馆报修" />
     <meta name="description" content="展馆报修" />
     <link href="css/css.css" rel="stylesheet" type="text/css" />
     <link href="css/detail_page.css" rel="stylesheet" type="text/css" />
+    <link href="css/jquery.mCustomScrollbar.css" rel="Stylesheet" type="text/css" />
     <!--[if IE 6]>
         <link rel="stylesheet" type="text/css" href="css/ie6.css" />
   <![endif]-->
@@ -25,7 +29,8 @@
     <div id="bgbox" class="bgbox">
         <div class="top">
             <div class="logo">
-                <img src="images/logo.jpg" /></div>
+                <img src="images/logo.jpg" />
+            </div>
 
             <div class="nav">
                 <ul>
@@ -63,17 +68,21 @@
                     </div>
                     <div class="detail_new_b"></div>
                 </div>
-                <a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image4','','images/bugbtn1_2.gif',1)">
-                    <img src="images/bugbtn1_1.gif" name="Image4" width="64" height="30" border="0" id="Image4" onmouseover="showDefaultText(4)" onmouseout="resetTextContent()" onclick="onNewStateCommit(4)"/></a> <a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image5','','images/bugbtn2_2.gif',1)">
-                    <img src="images/bugbtn2_1.gif" name="Image5" width="78" height="30" border="0" id="Image5" onmouseover="showDefaultText(8)" onmouseout="resetTextContent()" onclick="onNewStateCommit(8)"/></a> <a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image6','','images/bugbtn3_2.gif',1)">
-                    <img src="images/bugbtn3_1.gif" name="Image6" width="78" height="30" border="0" id="Image6" onmouseover="showDefaultText(32)" onmouseout="resetTextContent()" onclick="onNewStateCommit(32)"/></a> <a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image7','','images/bugbtn4_2.gif',1)">
-                    <img src="images/bugbtn4_1.gif" name="Image7" width="64" height="30" border="0" id="Image7" onmouseover="showDefaultText(16)" onmouseout="resetTextContent()" onclick="onNewStateCommit(16)"/></a> <a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image8','','images/bugbtn5_2.gif',1)">
-                    <img src="images/bugbtn5_1.gif" name="Image8" width="78" height="30" border="0" id="Image8" onmouseover="showDefaultText(64)" onmouseout="resetTextContent()" onclick="onNewStateCommit(64)"/></a> <a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image9','','images/bugbtn6_2.gif',1)">
-                    <img src="images/bugbtn6_1.gif" name="Image9" width="64" height="30" border="0" id="Image9" onmouseover="showDefaultText(512)" onmouseout="resetTextContent()" onclick="onNewStateCommit(512)"/></a>
+
+                <div id="reply_items">
+                    <a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image4','','images/bugbtn1_2.gif',1)">
+                        <img src="images/bugbtn1_1.gif" name="Image4" width="64" height="30" border="0" id="Image4" onmouseover="showDefaultText(4)" onmouseout="resetTextContent()" onclick="onNewStateCommit(4)" /></a> <a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image5','','images/bugbtn2_2.gif',1)">
+                            <img src="images/bugbtn2_1.gif" name="Image5" width="78" height="30" border="0" id="Image5" onmouseover="showDefaultText(8)" onmouseout="resetTextContent()" onclick="onNewStateCommit(8)" /></a> <a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image6','','images/bugbtn3_2.gif',1)">
+                                <img src="images/bugbtn3_1.gif" name="Image6" width="78" height="30" border="0" id="Image6" onmouseover="showDefaultText(32)" onmouseout="resetTextContent()" onclick="onNewStateCommit(32)" /></a> <a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image7','','images/bugbtn4_2.gif',1)">
+                                    <img src="images/bugbtn4_1.gif" name="Image7" width="64" height="30" border="0" id="Image7" onmouseover="showDefaultText(16)" onmouseout="resetTextContent()" onclick="onNewStateCommit(16)" /></a> <a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image8','','images/bugbtn5_2.gif',1)">
+                                        <img src="images/bugbtn5_1.gif" name="Image8" width="78" height="30" border="0" id="Image8" onmouseover="showDefaultText(64)" onmouseout="resetTextContent()" onclick="onNewStateCommit(64)" /></a> <a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image9','','images/bugbtn6_2.gif',1)">
+                                            <img src="images/bugbtn6_1.gif" name="Image9" width="64" height="30" border="0" id="Image9" onmouseover="showDefaultText(512)" onmouseout="resetTextContent()" onclick="onNewStateCommit(512)" /></a>
+                </div>
             </div>
 
             <div class="detail_r">
-                <img src="images/detail_phone.gif" /></div>
+                <img src="images/detail_phone.gif" />
+            </div>
             <div class="clear"></div>
 
         </div>

@@ -38,6 +38,9 @@ function showFaultDetail(data) {
                 var htmlTag = generateReplyItem(unescapedOldContent, faults[id].date.$date);
                 oldContent.append(htmlTag);
             }
+
+            //  append scrollbar
+            oldContent.mCustomScrollbar();
         }
     }
 }
@@ -105,6 +108,8 @@ function resetTextContent() {
 }
 
 function animateAppend(htmlText) {
+    //  disable reply items
+
     var newElement = document.createElement("div");
     var width = $("#old_content").css("width");
     var left = "50px";
@@ -130,7 +135,10 @@ function animateAppend(htmlText) {
         opacity:'0'
     },
     1500,
-    function () { $(newElment).remove(); });
+    function () {
+        $(newElment).remove();
+
+    });
 }
 
 function onNewStateCommit(newState) {
@@ -149,7 +157,16 @@ function onNewStateCommit(newState) {
                 //  show new commitment
                 var htmlTag = generateReplyItem(RN2BR(orgContent), new Date());
                 animateAppend(htmlTag);
-                $(htmlTag).hide().appendTo("#old_content").fadeIn(1500);
+                $(htmlTag).hide()
+                    .appendTo("#old_content .mCSB_container")
+                    .fadeIn(1500, 
+                    function () {
+                        //  update content area
+                        $("#old_content").mCustomScrollbar("update");
+                        $("#old_content").mCustomScrollbar("scrollTo", "bottom");
+                    });
+               
+                //  empty user input
                 textCtrl.val("");
 
                 //  reset status description

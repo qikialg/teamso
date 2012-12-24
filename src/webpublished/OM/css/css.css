@@ -138,3 +138,5 @@ h2 { font-size:24px; font-weight:bold; line-height:42px;}
 .detail_new_b { height:15px; background:url(../images/detail_newbox_b.gif) no-repeat;}
 .detail_new_m { background:url(../images/detail_newbox_m.gif); padding:0 15px;}
 .detailtext { width:477px; line-height:18px; border:0; height:50px;}
+
+.old_content { height:100px;}

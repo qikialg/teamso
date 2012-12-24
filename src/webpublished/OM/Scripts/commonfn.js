@@ -1,4 +1,4 @@
-function getParInURL(parName) {
+﻿function getParInURL(parName) {
     var reg = new RegExp(parName+"=.{1,}(&|$)");
     var r = window.location.search.match(reg);
     if (r != null)

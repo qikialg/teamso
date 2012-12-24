@@ -664,10 +664,9 @@ function InitExhibitionHall(ExhibitionHallContent) {
 
     HandleRequest = true;
 
-    url = "http://113.12.226.243:9006/eventelement.aspx?oc=hi&fc=" + ExhibitionHallContent + "楼";
+    url = "http://113.12.226.243:9006/eventelement.aspx?oc=hi&fc=" + ExhibitionHallContent + "%C2%A5";
 
     $.post(url, function (data) {
-
         InitExhibitionDiv(data);
     });
 }

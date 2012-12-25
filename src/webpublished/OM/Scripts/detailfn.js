@@ -1,10 +1,22 @@
 ﻿function generateReplyItem(content_text, commitDate) {
     var oldContentCommitDate = new Date(commitDate);
-    var htmlTag = "<div class=\"detail_old\"><div class=\"detail_old_t\"></div><div class=\"detail_old_m\">";
+    var htmlTag = "<div class=\"detail_old\">";
+
+    //  top
+    htmlTag += "<div class=\"detail_old_t\"><div class=\"detail_old_t_l\"></div><div class=\"detail_old_t_r\"></div><div class=\"detail_old_t_m\"></div></div>";
+
+    //  middle
+    htmlTag += "<div class=\"detail_old_m\">";
     htmlTag += content_text;
     htmlTag += "<div class=\"text_r\">";
     htmlTag += oldContentCommitDate.getFullYear() + "年" + oldContentCommitDate.getMonth() + "月" + oldContentCommitDate.getDate() + "日 " + oldContentCommitDate.toLocaleTimeString();
-    htmlTag += "</div></div><div class=\"detail_old_b\"></div></div>";
+    htmlTag += "</div></div>";
+
+    //  bottom
+    htmlTag += "<div class=\"detail_old_b\"><div class=\"detail_old_b_l\"></div><div class=\"detail_old_b_r\"></div><div class=\"detail_old_b_m\"></div></div>";
+
+    //  close parent
+    htmlTag += "</div>";
 
     return htmlTag;
 }
@@ -107,12 +119,16 @@ function resetTextContent() {
     }
 }
 
+var commiting = false;
 function animateAppend(htmlText) {
-    //  disable reply items
+    //  disable reply items to prevent fast commit
+    commiting = true;
+    $("#reply_items img").fadeTo("fast", 0.5);
 
+    var oldContentWidget = $("#old_content");
     var newElement = document.createElement("div");
     var width = $("#old_content").css("width");
-    var left = "50px";
+    var left = oldContentWidget.position().left + "px";
     var top = "0px";
     $(newElement).css("width", width)
         .css("position", "absolute")
@@ -121,7 +137,7 @@ function animateAppend(htmlText) {
         .append(htmlText)
         .appendTo($("#bgbox"));
     
-    var oldContentWidget = $("#old_content");
+
     var lastDivPos = oldContentWidget.position();
     var newElementPos = $(newElement).position();
     var animateLeft = lastDivPos.left - newElementPos.left;
@@ -136,12 +152,18 @@ function animateAppend(htmlText) {
     },
     1500,
     function () {
-        $(newElment).remove();
+        //  allow commiting
+        commiting = false;
+        $("#reply_items img").fadeTo("fast", 1);
 
+        $(newElement).remove();
     });
 }
 
 function onNewStateCommit(newState) {
+    if (commiting)
+        return;
+
     var textCtrl = $("#text_content");
     var stroid = getParInURL("oid");
     var requestUrl = TCPRequestHeader + ServerAddr + ":" + appPort + "/" + eventBusiness;
@@ -167,7 +189,7 @@ function onNewStateCommit(newState) {
                     });
                
                 //  empty user input
-                textCtrl.val("");
+                //textCtrl.val("");
 
                 //  reset status description
                 var descTag = $("#status_desc");
